@@ -40,7 +40,7 @@ void enemyApplyVelocity(enemy* en) {
 void navigateToPoint(enemy* en, Vector2 position, float delta) {
   Vector2 vectorToPoint = Vector2Subtract(position, en->body.position);
   float speed = min(Vector2Length(vectorToPoint), en->speed);
-  en->velocity = Vector2Add(Vector2Scale(Vector2Subtract(vectorToPoint, en->velocity), speed * delta), en->velocity);
+  en->velocity = Vector2Add(Vector2Scale(Vector2Normalize(Vector2Subtract(vectorToPoint, en->velocity)), speed * delta), en->velocity);
 }
 
 void navigate(enemy* en, float delta) {
@@ -49,9 +49,15 @@ void navigate(enemy* en, float delta) {
   //right now lets just have it maintain its previous distance
 
   en->velocity = Vector2Scale(en->velocity, enemyFric);
+
+  Vector2 difNormal = Vector2Normalize(Vector2Subtract(en->player->body.position, en->body.position));
+
+  Vector2 target = Vector2Scale(difNormal, en->previousDistance);
+
   en->previousDistance = Vector2Distance(en->body.position, en->player->body.position);
 
+
   //if(Vector2Distance(en->player->body.position, en->body.position) > en->viewDistance)
-  navigateToPoint(en, Vector2Zero(), delta);
+  navigateToPoint(en, target, delta);
   enemyApplyVelocity(en);
 };

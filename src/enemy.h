@@ -9,7 +9,7 @@
 #define enemyMaxHp 15
 #define enemydefdmng 3
 #define enemyPrefDist 200
-#define enemySpeed 4
+#define enemySpeed 100
 #define enemyDefShotSpeed .5f
 #define enemyDefCircle (circle){(Vector2){0, 0}, 10, RED};
 #define enemyViewDistance 300
