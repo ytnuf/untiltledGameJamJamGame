@@ -21,6 +21,7 @@ enemy initEnemy(Vector2 position, Player* player, circle avoidZone) {
   ret.preferedDistance = enemyPrefDist;
   ret.prefDistMaxOffset = 0;
   ret.elapsedShotTime = 0;
+  ret.seen = enemyCanSeePlayer(ret);
   return ret;
 }
 
@@ -54,7 +55,7 @@ void navigate(enemy* en, float delta) {
 
   Vector2 target = Vector2Scale(difNormal, en->previousDistance);
 
-  en->previousDistance = Vector2Distance(en->body.position, en->player->body.position);
+  en->previousDistance += (Vector2Distance(en->body.position, en->player->body.position) - en->previousDistance) * enemyPrefDistanceSmoothing;
 
 
   //if(Vector2Distance(en->player->body.position, en->body.position) > en->viewDistance)

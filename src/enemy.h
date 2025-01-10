@@ -13,6 +13,8 @@
 #define enemyDefShotSpeed .5f
 #define enemyDefCircle (circle){(Vector2){0, 0}, 10, RED};
 #define enemyViewDistance 300
+#define enemyPrefDistanceSmoothing .1
+#define enemyMinimumDistance
 
 #define enemyFric .8
 
@@ -31,6 +33,7 @@ struct enemy {
   float shotSpeed;
   float viewDistance;
   float previousDistance;
+  bool seen;
 };
 typedef struct enemy enemy;
 

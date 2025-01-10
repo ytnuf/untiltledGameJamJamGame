@@ -13,7 +13,7 @@
 
 #define friction .95f
 
-#define cameraLatency .2
+#define cameraLatency .1
 
 int main() {
   InitWindow(screenDimensions.x, screenDimensions.y, "cool game :)");
