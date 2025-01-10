@@ -2,6 +2,7 @@
 #include <raymath.h>
 #include "circle.h"
 #include "player.h"
+#include "enemy.h"
 
 #define screenDimensions (Vector2){1000 * 16/9, 1000 / (16 / 9)}
 
@@ -23,6 +24,8 @@ int main() {
 
   circle planet = {{5150, 5150}, 7000, planetColour};
 
+  enemy en = initEnemy((Vector2){300, 300}, &player, planet);
+
   while(!WindowShouldClose()) {
     float delta = GetFrameTime();
 
@@ -32,17 +35,20 @@ int main() {
 
     Vector2 plrGlobalPos = {player.body.position.y + GetScreenWidth()/2.0f, -player.body.position.x + GetScreenHeight()/2.0f};
 
+    //camera stuff
     camera.target = Vector2Lerp(camera.target, plrGlobalPos, cameraLatency);
     camera.offset = (Vector2){GetScreenWidth() * .5, GetScreenHeight() * .5};
 
     //draw
     BeginDrawing();
     BeginMode2D(camera);
+    navigate(&en, delta);
 
     ClearBackground(backroundColour);
 
     drawCircle(&player.body);
     drawCircle(&planet);
+    drawCircle(&en.body);
 
     DrawFPS(Vector2Subtract(camera.target,  camera.offset).x, Vector2Subtract(camera.target, camera.offset).y);
 
