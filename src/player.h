@@ -9,6 +9,10 @@
 #define right KEY_D
 #define down KEY_S
 
+#define playerR 20
+#define playerStartingPosition (Vector2){0, 0}
+#define playerSpeed 100
+
 struct Player {
   circle body;
   Vector2 velocity;
@@ -18,5 +22,7 @@ typedef struct Player Player;
 void playerApplyVelocity(Player* plr);
 
 Vector2 getInputVector(int l, int r, int u, int d);
+
+void applyInputToVelocity(Player* plr, float delta);
 
 #endif

@@ -1,2 +1,2 @@
 program:
-	gcc ./*.c -lraylib -o game
+	gcc *.c -lraylib -o game
