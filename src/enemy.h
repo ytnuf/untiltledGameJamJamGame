@@ -8,13 +8,13 @@
 
 #define enemyMaxHp 15
 #define enemydefdmng 3
-#define enemyPrefDist 200
+#define enemyPrefDist 300
 #define enemySpeed 100
 #define enemyDefShotSpeed .5f
 #define enemyDefCircle (circle){(Vector2){0, 0}, 10, RED};
-#define enemyViewDistance 300
+#define enemyViewDistance 600
 #define enemyPrefDistanceSmoothing .1
-#define enemyMinimumDistance
+#define enemyMinimumDistance 400
 
 #define enemyFric .8
 
@@ -27,12 +27,11 @@ struct enemy {
   float damage;
   float speed;
   Player* player;
-  float preferedDistance;
   float prefDistMaxOffset;
   float elapsedShotTime;
   float shotSpeed;
   float viewDistance;
-  float previousDistance;
+  float targetDistance;
   bool seen;
 };
 typedef struct enemy enemy;
@@ -44,5 +43,7 @@ bool tooCloseToPlayer(enemy en);
 bool enemyCanSeePlayer(enemy en);
 
 void navigate(enemy* en, float delta);
+
+bool enemyTargetIsInPlanet(enemy* en);
 
 #endif

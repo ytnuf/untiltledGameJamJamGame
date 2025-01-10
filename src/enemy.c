@@ -6,6 +6,10 @@ float min(float a, float b) {
   return a < b ? a : b;
 }
 
+float max(float a, float b) {
+  return a < b ? b : a;
+}
+
 enemy initEnemy(Vector2 position, Player* player, circle avoidZone) {
   enemy ret;
   ret.player = player;      //this is a ton less efficient than just doing (enemy){...} (at least on the assembly level)
@@ -18,7 +22,7 @@ enemy initEnemy(Vector2 position, Player* player, circle avoidZone) {
   ret.damage = enemydefdmng;
   ret.velocity = Vector2Zero();
   ret.viewDistance = enemyViewDistance;
-  ret.preferedDistance = enemyPrefDist;
+  ret.targetDistance = enemyViewDistance;
   ret.prefDistMaxOffset = 0;
   ret.elapsedShotTime = 0;
   ret.seen = enemyCanSeePlayer(ret);
@@ -26,7 +30,7 @@ enemy initEnemy(Vector2 position, Player* player, circle avoidZone) {
 }
 
 bool tooCloseToPlayer(enemy en) {
-  return en.preferedDistance > Vector2Distance(en.body.position, en.player->body.position);
+  return enemyMinimumDistance > Vector2Distance(en.body.position, en.player->body.position);
 }
 
 bool enemyCanSeePlayer(enemy en) {
@@ -44,6 +48,15 @@ void navigateToPoint(enemy* en, Vector2 position, float delta) {
   en->velocity = Vector2Add(Vector2Scale(Vector2Normalize(Vector2Subtract(vectorToPoint, en->velocity)), speed * delta), en->velocity);
 }
 
+Vector2 enemyGetTargetPosition(enemy* en) {
+  Vector2 difNormal = Vector2Normalize(Vector2Subtract(en->body.position, en->player->body.position));
+  return Vector2Add(Vector2Scale(difNormal, en->targetDistance), en->player->body.position);
+}
+
+bool enemyTargetInPlanet(enemy* en) {
+  return Vector2Distance(en->avoidZone.position, enemyGetTargetPosition(en)) < en->avoidZone.radius;
+}
+
 void navigate(enemy* en, float delta) {
   //this is gonna be a complicated function; good thing i have blahaj here to help :)
   //great we're not too close
@@ -51,14 +64,16 @@ void navigate(enemy* en, float delta) {
 
   en->velocity = Vector2Scale(en->velocity, enemyFric);
 
-  Vector2 difNormal = Vector2Normalize(Vector2Subtract(en->player->body.position, en->body.position));
+  en->targetDistance += ((Vector2Distance(en->body.position, en->player->body.position) - en->targetDistance) * enemyPrefDistanceSmoothing);
+  en->targetDistance = (en->targetDistance + enemyPrefDist) / 2.0f;
+  if(en->targetDistance < enemyMinimumDistance)
+    en->targetDistance = enemyMinimumDistance;
 
-  Vector2 target = Vector2Scale(difNormal, en->previousDistance);
+  Vector2 difNormal = Vector2Normalize(Vector2Subtract(en->body.position, en->player->body.position));
+  Vector2 target = Vector2Add(Vector2Scale(difNormal, en->targetDistance), en->player->body.position);
 
-  en->previousDistance += (Vector2Distance(en->body.position, en->player->body.position) - en->previousDistance) * enemyPrefDistanceSmoothing;
-
-
-  //if(Vector2Distance(en->player->body.position, en->body.position) > en->viewDistance)
-  navigateToPoint(en, target, delta);
+  en->seen = en->seen || enemyCanSeePlayer(*en);
+  if(en->seen)
+    navigateToPoint(en, target, delta);
   enemyApplyVelocity(en);
 };
