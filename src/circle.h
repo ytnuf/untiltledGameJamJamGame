@@ -10,6 +10,6 @@ struct circle {
 };
 typedef struct circle circle;
 
-void drawCircle(circle);
+void drawCircle(circle*);
 
 #endif
