@@ -1,2 +1,4 @@
 # ignore this; its local
 tmp
+# ignore the excecutable
+src/game
