@@ -1,4 +1,2 @@
-# ignore this; its local
-tmp/
-# ignore the excecutable
+# ignore the game exe
 src/game

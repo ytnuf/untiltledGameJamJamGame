@@ -24,7 +24,7 @@ int main() {
 
   circle planet = {{5150, 5150}, 7000, planetColour};
 
-  enemy en = initEnemy((Vector2){300, 300}, &player, planet);
+  enemy en = initEnemy((Vector2){-300, -300}, &player, planet);
 
   while(!WindowShouldClose()) {
     float delta = GetFrameTime();
