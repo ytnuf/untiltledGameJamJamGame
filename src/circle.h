@@ -16,4 +16,8 @@ circle randomCircleOnScreen(Camera2D cam, Color col, float maxSize, float minSiz
 
 Vector2 getRandomVector2OnScreen(Camera2D cam);
 
+Vector2 removeCam(Vector2 v, Camera2D cam);
+
+Vector2 applyCam(Vector2 v, Camera2D cam);
+
 #endif

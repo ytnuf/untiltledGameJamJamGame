@@ -20,6 +20,14 @@ Vector2 getRandomVector2OnScreen(Camera2D cam) {
   return randPoint;
 }
 
+Vector2 applyCam(Vector2 v, Camera2D cam) {
+  return Vector2Subtract(Vector2Add(v, (Vector2){-cam.target.y, cam.target.x}), (Vector2){-cam.offset.y, cam.offset.x});
+}
+
+Vector2 removeCam(Vector2 v, Camera2D cam) {
+  return Vector2Add(Vector2Subtract(v, (Vector2){-cam.offset.y, cam.offset.x}), (Vector2){-cam.target.y, cam.target.x});
+}
+
 //seed before.
 circle randomCircleOnScreen(Camera2D cam, Color col, float maxSize, float minSize) {
   circle out;
