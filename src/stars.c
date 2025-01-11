@@ -33,7 +33,7 @@ void refreshStars(circle* starArr, Camera2D Camera) {
       Vector2 rand = Vector2Scale(getRandomVector2OnScreen(Camera), starSpawnDist);
       while(getPointIsOnScreenScaled(rand, Camera, 1)) {
         rand = Vector2Scale(getRandomVector2OnScreen(Camera), starSpawnDist);
-        if(!getPointIsOnScreenScaled(rand, Camera, 1))
+        if(!getPointIsOnScreenScaled(rand, Camera, starSpawnDist))
           starArr[i].position = rand;
       }
     }
