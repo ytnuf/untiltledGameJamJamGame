@@ -1,8 +1,11 @@
 #include <raylib.h>
 #include <raymath.h>
+#include <stdlib.h>
+#include <time.h>
 #include "circle.h"
 #include "player.h"
 #include "enemy.h"
+#include "stars.h"
 
 #define screenDimensions (Vector2){1000 * 16/9, 1000 / (16 / 9)}
 
@@ -15,6 +18,8 @@
 
 #define cameraLatency .1
 
+#define closeKey KEY_Q
+
 int main() {
   InitWindow(screenDimensions.x, screenDimensions.y, "cool game :)");
   SetTargetFPS(60);
@@ -25,6 +30,8 @@ int main() {
   circle planet = {{5150, 5150}, 7000, planetColour};
 
   enemy en = initEnemy((Vector2){-300, -300}, &player, planet);
+
+  circle* starArr = initStars(starCount);
 
   while(!WindowShouldClose()) {
     float delta = GetFrameTime();
@@ -39,6 +46,8 @@ int main() {
     camera.target = Vector2Lerp(camera.target, plrGlobalPos, cameraLatency);
     camera.offset = (Vector2){GetScreenWidth() * .5, GetScreenHeight() * .5};
 
+    refreshStars(starArr, camera);
+
     //draw
     BeginDrawing();
     BeginMode2D(camera);
@@ -50,10 +59,19 @@ int main() {
     drawCircle(&planet);
     drawCircle(&en.body);
 
+    for(int i = 0; i < starCount; i++)
+      drawCircle(&starArr[i]);
+
     DrawFPS(Vector2Subtract(camera.target,  camera.offset).x, Vector2Subtract(camera.target, camera.offset).y);
 
     EndDrawing();
+
+    if(IsKeyDown(closeKey))
+      break;
   }
   CloseWindow();
+
+  destructStars(starArr);
+
   return 0;
 }

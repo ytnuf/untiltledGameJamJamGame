@@ -12,4 +12,8 @@ typedef struct circle circle;
 
 void drawCircle(circle*);
 
+circle randomCircleOnScreen(Camera2D cam, Color col, float maxSize, float minSize);
+
+Vector2 getRandomVector2OnScreen(Camera2D cam);
+
 #endif
