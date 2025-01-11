@@ -69,11 +69,12 @@ void navigate(enemy* en, float delta) {
   if(en->targetDistance < enemyMinimumDistance)
     en->targetDistance = enemyMinimumDistance;
 
-  Vector2 difNormal = Vector2Normalize(Vector2Subtract(en->body.position, en->player->body.position));
-  Vector2 target = Vector2Add(Vector2Scale(difNormal, en->targetDistance), en->player->body.position);
+  Vector2 target = enemyGetTargetPosition(en);
 
   en->seen = en->seen || enemyCanSeePlayer(*en);
   if(en->seen)
     navigateToPoint(en, target, delta);
+  if(Vector2Distance(en->body.position, en->avoidZone.position) < en->avoidZone.radius + enemyPreferedAvoidDistance)
+    en->velocity = Vector2Add(en->velocity, Vector2Scale(Vector2Normalize(Vector2Subtract(en->body.position, en->avoidZone.position)), (en->avoidZone.radius + enemyPreferedAvoidDistance - Vector2Length(Vector2Subtract(en->body.position, en->avoidZone.position))) * delta)); //here the enemy is too close :/
   enemyApplyVelocity(en);
 };

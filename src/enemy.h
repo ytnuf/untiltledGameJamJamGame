@@ -15,6 +15,8 @@
 #define enemyViewDistance 600
 #define enemyPrefDistanceSmoothing .1
 #define enemyMinimumDistance 400
+#define enemyPreferedAvoidDistance 550
+#define enemyAvoidZonePrefDistance 100
 
 #define enemyFric .8
 
