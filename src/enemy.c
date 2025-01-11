@@ -1,6 +1,9 @@
-#include "enemy.h"
 #include <raylib.h>
 #include <raymath.h>
+#include <stdio.h>
+
+#include "enemy.h"
+#include "missile.h"
 
 float min(float a, float b) {
   return a < b ? a : b;
@@ -18,6 +21,7 @@ enemy initEnemy(Vector2 position, Player* player, circle avoidZone) {
   ret.health = enemyMaxHp;
   ret.body = enemyDefCircle;
   ret.body.position = position;
+  ret.shotSpeed = enemyDefShotSpeed;
   ret.speed = enemySpeed;
   ret.damage = enemydefdmng;
   ret.velocity = Vector2Zero();
@@ -77,4 +81,21 @@ void navigate(enemy* en, float delta) {
   if(Vector2Distance(en->body.position, en->avoidZone.position) < en->avoidZone.radius + enemyPreferedAvoidDistance)
     en->velocity = Vector2Add(en->velocity, Vector2Scale(Vector2Normalize(Vector2Subtract(en->body.position, en->avoidZone.position)), (en->avoidZone.radius + enemyPreferedAvoidDistance - Vector2Length(Vector2Subtract(en->body.position, en->avoidZone.position))) * delta)); //here the enemy is too close :/
   enemyApplyVelocity(en);
-};
+}
+
+bool shouldSpawnMissile(enemy* en) {
+  return en->elapsedShotTime >= en->shotSpeed;
+}
+
+Missile fireMissile(enemy* en) {
+  return initMissile(en->body.position, Vector2Zero(), 10, &en->player->body);
+}
+
+void manageEnemy(enemy* en, Missile* out, float delta) {
+  en->elapsedShotTime += delta;
+  if(shouldSpawnMissile(en)) {
+    *out = fireMissile(en);
+    en->elapsedShotTime = 0;
+  }
+  navigate(en, delta);
+}

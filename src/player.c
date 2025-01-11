@@ -19,3 +19,8 @@ void applyInputToVelocity(Player* plr, float delta) {
   Vector2 input = Vector2Scale(getInputVector(up, down, left, right), playerSpeed * delta);
   plr->velocity = Vector2Add(plr->velocity, input);
 }
+
+bool applyDamage(Player* plr, float damage) {
+  plr->health -= damage;
+  return plr->health <= 0;
+}

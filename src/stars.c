@@ -5,13 +5,13 @@
 #include <stdlib.h>
 
 #define starDist 1.01
-#define starSpawnDist 1.08
-#define starReloadDist 1.1
+#define starSpawnDist 1
+#define starReloadDist 1
 
 circle* initStars(int star) {
   circle* out = (circle*)malloc(sizeof(circle) * star);
   while(star-- > 0) {
-    out[star] = (circle){Vector2Zero(), 1, starColour};
+    out[star] = (circle){(Vector2){10000, 10000}, 1, starColour};
   }
   return out;
 }

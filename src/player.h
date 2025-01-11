@@ -16,6 +16,8 @@
 struct Player {
   circle body;
   Vector2 velocity;
+  float maxHealth;
+  float health;
 };
 typedef struct Player Player;
 
@@ -24,5 +26,7 @@ void playerApplyVelocity(Player* plr);
 Vector2 getInputVector(int l, int r, int u, int d);
 
 void applyInputToVelocity(Player* plr, float delta);
+
+bool applyDamage(Player* plr, float damage);
 
 #endif

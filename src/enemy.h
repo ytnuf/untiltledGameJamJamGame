@@ -1,16 +1,17 @@
 #ifndef enemy_h
 #define enemy_h
 
-#include "circle.h"
-#include "player.h"
 #include <raylib.h>
 #include <raymath.h>
+#include "circle.h"
+#include "player.h"
+#include "missile.h"
 
 #define enemyMaxHp 15
 #define enemydefdmng 3
 #define enemyPrefDist 300
 #define enemySpeed 100
-#define enemyDefShotSpeed .5f
+#define enemyDefShotSpeed 1.0f
 #define enemyDefCircle (circle){(Vector2){0, 0}, 10, RED};
 #define enemyViewDistance 600
 #define enemyPrefDistanceSmoothing .1
@@ -47,5 +48,9 @@ bool enemyCanSeePlayer(enemy en);
 void navigate(enemy* en, float delta);
 
 bool enemyTargetIsInPlanet(enemy* en);
+
+bool shouldSpawnMissile(enemy* en);
+
+void manageEnemy(enemy* en, Missile* out, float delta);
 
 #endif

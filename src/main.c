@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include "circle.h"
+#include "missile.h"
 #include "player.h"
 #include "enemy.h"
 #include "stars.h"
@@ -21,6 +22,7 @@
 #define closeKey KEY_Q
 
 int main() {
+  srand(time(NULL));
   InitWindow(screenDimensions.x, screenDimensions.y, "cool game :)");
   SetTargetFPS(60);
   Camera2D camera = {Vector2Scale(screenDimensions, .5), Vector2Scale(screenDimensions, .5),0, 1};
@@ -31,6 +33,9 @@ int main() {
 
   enemy en = initEnemy((Vector2){-300, -300}, &player, planet);
 
+  Missile debugging = initMissile(Vector2Zero(), Vector2Zero(), 0, 0);
+  debugging.valid = false;
+
   circle* starArr = initStars(starCount);
 
   while(!WindowShouldClose()) {
@@ -40,24 +45,27 @@ int main() {
     playerApplyVelocity(&player);
     player.velocity = Vector2Scale(player.velocity, friction);
 
-    Vector2 plrGlobalPos = {player.body.position.y + GetScreenWidth()/2.0f, -player.body.position.x + GetScreenHeight()/2.0f};
-
     //camera stuff
+    Vector2 plrGlobalPos = {player.body.position.y + GetScreenWidth()/2.0f, -player.body.position.x + GetScreenHeight()/2.0f};
     camera.target = Vector2Lerp(camera.target, plrGlobalPos, cameraLatency);
     camera.offset = (Vector2){GetScreenWidth() * .5, GetScreenHeight() * .5};
 
     refreshStars(starArr, camera);
+    manageEnemy(&en, &debugging, delta);
+    if(debugging.valid)
+      manageMissileMovement(&debugging, delta);
 
     //draw
     BeginDrawing();
     BeginMode2D(camera);
-    navigate(&en, delta);
 
     ClearBackground(backroundColour);
 
     drawCircle(&player.body);
     drawCircle(&planet);
     drawCircle(&en.body);
+    if(debugging.valid)
+      drawCircle(&debugging.body);
 
     for(int i = 0; i < starCount; i++)
       drawCircle(&starArr[i]);
