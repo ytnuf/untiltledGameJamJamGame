@@ -21,6 +21,8 @@
 
 #define closeKey KEY_Q
 
+#define misSize sizeof(Missile)
+
 int main() {
   srand(time(NULL));
   InitWindow(screenDimensions.x, screenDimensions.y, "cool game :)");
@@ -33,15 +35,16 @@ int main() {
 
   enemy en = initEnemy((Vector2){-300, -300}, &player, planet);
 
-  Missile debugging = initMissile(Vector2Zero(), Vector2Zero(), 0, 0);
-  debugging.valid = false;
+  Missile tmp = initMissile(Vector2Zero(), Vector2Zero(), 0, 0);
+  Missile* missileArr = (Missile*)malloc(0);
+  int missileCount = 0;
 
   circle* starArr = initStars(starCount);
 
   while(!WindowShouldClose()) {
     float delta = GetFrameTime();
 
-    applyInputToVelocity(&player, delta);
+    handleMovment(&player, planet, delta);
     playerApplyVelocity(&player);
     player.velocity = Vector2Scale(player.velocity, friction);
 
@@ -51,9 +54,13 @@ int main() {
     camera.offset = (Vector2){GetScreenWidth() * .5, GetScreenHeight() * .5};
 
     refreshStars(starArr, camera);
-    manageEnemy(&en, &debugging, delta);
-    if(debugging.valid)
-      manageMissileMovement(&debugging, delta);
+
+    manageEnemy(&en, &tmp, delta);
+    if(tmp.valid) {
+      missileCount++;
+      missileArr = (Missile*)realloc(missileArr, misSize * missileCount);
+      missileArr[missileCount - 1] = tmp;
+    }
 
     //draw
     BeginDrawing();
@@ -61,14 +68,27 @@ int main() {
 
     ClearBackground(backroundColour);
 
-    drawCircle(&player.body);
-    drawCircle(&planet);
-    drawCircle(&en.body);
-    if(debugging.valid)
-      drawCircle(&debugging.body);
+    int i = 0;
+  loop:     //pardon the use of labels and stuff it just optomizes memory here
+    if(missileCount == 0 || i >= missileCount)
+      goto exitLoop;
+    if(!missileArr[i].valid) {
+      //this is where we pop from stack
+      missileArr = (Missile*)realloc(missileArr, misSize * (missileCount - 1));
+      missileCount = missileCount - 1;
+      goto loop;
+    }
+      manageMissileMovement(&missileArr[i], delta);
+      drawCircle(&missileArr[i].body);
+    i++;
+    goto loop;
+  exitLoop:
 
     for(int i = 0; i < starCount; i++)
       drawCircle(&starArr[i]);
+    drawCircle(&player.body);
+    drawCircle(&planet);
+    drawCircle(&en.body);
 
     DrawFPS(Vector2Subtract(camera.target,  camera.offset).x, Vector2Subtract(camera.target, camera.offset).y);
 

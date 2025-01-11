@@ -18,6 +18,7 @@
 #define enemyMinimumDistance 400
 #define enemyPreferedAvoidDistance 550
 #define enemyAvoidZonePrefDistance 100
+#define enemyKnockBack 50
 
 #define enemyFric .8
 

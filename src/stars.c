@@ -5,8 +5,8 @@
 #include <stdlib.h>
 
 #define starDist 1.01
-#define starSpawnDist 1
-#define starReloadDist 1
+#define starSpawnDist 1.1
+#define starReloadDist 1.1
 
 circle* initStars(int star) {
   circle* out = (circle*)malloc(sizeof(circle) * star);

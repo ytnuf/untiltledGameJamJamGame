@@ -1,6 +1,5 @@
 #include <raylib.h>
 #include <raymath.h>
-#include <stdio.h>
 
 #include "enemy.h"
 #include "missile.h"
@@ -88,14 +87,19 @@ bool shouldSpawnMissile(enemy* en) {
 }
 
 Missile fireMissile(enemy* en) {
+  Vector2 toTar = Vector2Normalize(Vector2Subtract( en->body.position, en->player->body.position));
+  Vector2 force = Vector2Scale(toTar, enemyKnockBack);
+  en->velocity = Vector2Add(en->velocity, force);
   return initMissile(en->body.position, Vector2Zero(), 10, &en->player->body);
 }
 
 void manageEnemy(enemy* en, Missile* out, float delta) {
   en->elapsedShotTime += delta;
   if(shouldSpawnMissile(en)) {
-    *out = fireMissile(en);
     en->elapsedShotTime = 0;
-  }
+    *out = fireMissile(en);
+    out->valid = true;
+  } else
+    out->valid = false;
   navigate(en, delta);
 }
