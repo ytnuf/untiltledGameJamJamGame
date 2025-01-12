@@ -1,5 +1,6 @@
 #include "missile.h"
 #include "circle.h"
+#include "player.h"
 #include <raymath.h>
 #include <raylib.h>
 #include <stdlib.h>
@@ -32,7 +33,7 @@ bool missileShouldBreak(Missile* mis) {
   return Vector2Distance(mis->body.position, mis->target->position) < mis->body.radius + mis->target->radius;
 }
 
-void manageMissileMovement(Missile* mis, float delta) {
+void manageMissileMovement(Missile* mis, float delta, Player* plr) {
   Vector2 velTerm = Vector2Scale(getVectorTo(mis->body.position, mis->target->position), missileSpeed * delta);
   mis->velocity = Vector2Add(velTerm, mis->velocity);
   //for this we have to step it goes so fast
@@ -40,8 +41,10 @@ void manageMissileMovement(Missile* mis, float delta) {
   for(int i = 0; i < stepCount; i++) {
     mis->body.position = Vector2Add(mis->body.position, velTmp);
     mis->valid = !missileShouldBreak(mis);
-    if(!mis->valid)
+    if(!mis->valid) {
+      applyDamage(plr, mis->damage);
       break;
+    }
   }
   mis->velocity = Vector2Scale(mis->velocity, missileVelocityDampening);
 }

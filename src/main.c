@@ -90,7 +90,7 @@ int main() {
         missileArr = (Missile*)realloc(missileArr, misSize * (missileCount + 1));
         continue;
       }
-        manageMissileMovement(&missileArr[i], delta);
+        manageMissileMovement(&missileArr[i], delta, &player);
         drawCircle(&missileArr[i].body);
       i++;
     }
@@ -99,6 +99,7 @@ int main() {
     drawCircle(&player.body);
     drawCircle(&planet);
     drawCircle(&en.body);
+    printf("%f\n", player.health);
 
     DrawFPS(Vector2Subtract(camera.target,  camera.offset).x, Vector2Subtract(camera.target, camera.offset).y);
 
