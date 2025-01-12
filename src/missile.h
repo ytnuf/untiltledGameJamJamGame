@@ -8,7 +8,7 @@
 
 #define missileSpeed 300
 #define missileCircl (circle){Vector2Zero(), 5, YELLOW}
-#define missileVelocityDampening .99f
+#define missileVelocityDampening .991f
 #define missileMaxDistance 3000
 #define missileMaxLifetime 3
 

@@ -50,5 +50,4 @@ void manageMissileMovement(Missile* mis, float delta, Player* plr) {
   mis->velocity = Vector2Scale(mis->velocity, missileVelocityDampening);
   mis->lifetime += delta;
   mis->valid = mis->lifetime < missileMaxLifetime && mis->valid;
-  printf("%f", mis->lifetime);
 }

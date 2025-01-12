@@ -4,7 +4,7 @@
 #include <raylib.h>
 #include "circle.h"
 
-#define starCount 1600
+#define starCount 1000
 #define starColour WHITE
 
 circle* initStars(int stars);

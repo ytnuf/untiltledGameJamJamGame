@@ -3,7 +3,7 @@
 #include <raymath.h>
 
 #define prefferedDistFromPlanet 100
-#define avoidanceScalar 5
+#define avoidanceScalar 6
 
 void playerApplyVelocity(Player* plr) {
   plr->body.position = Vector2Add(plr->body.position, plr->velocity);
@@ -34,7 +34,7 @@ Vector2 getAvoidanceForce(Player* plr, circle planet, float delta) {
   if(distanceFromEdge >= prefferedDistFromPlanet)
     return Vector2Zero();
   Vector2 difNormalized = Vector2Normalize(Vector2Subtract(plr->body.position, planet.position));
-  return Vector2Scale(difNormalized, (prefferedDistFromPlanet - distanceFromEdge) * delta * avoidanceScalar);
+  return Vector2Scale(difNormalized, distanceFromEdge * delta * avoidanceScalar);
 }
 
 void applyAvoidanceForce(Player* plr, circle planet, float delta) {
