@@ -47,7 +47,8 @@ int main() {
   circle* starArr = initStars(starCount);
 
   short currentState = gameplayCode;
-  bool firstDeadFrame = true;
+
+  refreshStars(starArr, camera, true);
 
   while(!WindowShouldClose()) {
     if(currentState == deadScreenCode)
@@ -85,7 +86,8 @@ int main() {
     while(missileCount != 0 && i < missileCount) {
       if(!missileArr[i].valid) {
         //this is where we pop from stack
-        missileArr = (Missile*)realloc(missileArr, misSize * (missileCount--));
+        missileArr[i] = missileArr[--missileCount];
+        missileArr = (Missile*)realloc(missileArr, misSize * (missileCount + 1));
         continue;
       }
         manageMissileMovement(&missileArr[i], delta);
@@ -107,8 +109,6 @@ int main() {
     continue;
 
   deadScreen:
-    refreshStars(starArr, camera, firstDeadFrame);
-    firstDeadFrame = !firstDeadFrame && firstDeadFrame;
     BeginDrawing();
     ClearBackground(backroundColour);
     DrawText("You are dead", 0, 0, 100, WHITE);
