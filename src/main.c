@@ -8,7 +8,6 @@
 #include "player.h"
 #include "enemy.h"
 #include "stars.h"
-#include "healthbar.h"
 
 #define screenDimensions (Vector2){1000 * 16/9, 1000 / (16 / 9)}
 
@@ -53,8 +52,6 @@ int main() {
 
   refreshStars(starArr, camera, true);
 
-  Healthbar test = {0, 0, 100, 2, 50, 10, WHITE, RED};
-
   while(!WindowShouldClose()) {
     //this is just for health stuff
     player.body.colour = ColorLerp(playerColour, playerDeadColour, 1 - player.health/player.maxHealth);
@@ -73,14 +70,16 @@ int main() {
 
     refreshStars(starArr, camera, false);
 
-    manageEnemy(&en, &tmp, delta, true);
+    if(en.valid)
+      manageEnemy(&en, &tmp, delta, true);
+    tmp.valid = en.valid && tmp.valid;
     if(tmp.valid) {
       missileCount++;
       missileArr = (Missile*)realloc(missileArr, misSize * missileCount);
       missileArr[missileCount - 1] = tmp;
     }
 
-    if(player.health == 0)
+    if(player.health <= 0)
       currentState = deadScreenCode;
 
     //draw
@@ -89,28 +88,33 @@ int main() {
 
     ClearBackground(backroundColour);
 
-    int i = 0;
+    unsigned int i = 0;
     while(missileCount != 0 && i < missileCount) {
       if(!missileArr[i].valid) {
         //this is where we pop from stack
-        missileArr[i] = missileArr[--missileCount];
-        missileArr = (Missile*)realloc(missileArr, misSize * (missileCount + 1));
+        missileArr[i] = missileArr[missileCount - 1];
+        missileArr = (Missile*)realloc(missileArr, misSize * (missileCount--));
         continue;
       }
-        manageMissileMovement(&missileArr[i], delta, &player);
-        drawCircle(&missileArr[i].body);
+      manageMissileMovement(&missileArr[i], delta, &player);
+      drawCircle(&missileArr[i].body);
+      if(enemyShouldDieToMissile(&en, &missileArr[i]))
+        en.valid = false;
+      if(Vector2Distance(missileArr[i].body.position, planet.position) <= missileArr[i].body.radius + planet.radius) {
+        missileArr[i].valid = false;
+        continue;
+      }
       i++;
     }
     for(int i = 0; i < starCount; i++)
       drawCircle(&starArr[i]);
     drawCircle(&player.body);
     drawCircle(&planet);
-    drawCircle(&en.body);
+    if(en.valid)
+      drawCircle(&en.body);
     printf("%f\n", player.health);
 
     DrawFPS(Vector2Subtract(camera.target,  camera.offset).x, Vector2Subtract(camera.target, camera.offset).y);
-
-    drawHealthbar(test);
 
     EndDrawing();
 
@@ -136,7 +140,7 @@ int main() {
     drawCircle(&player.body);
     drawCircle(&en.body);
     DrawText("You are dead", camera.target.x - camera.offset.x, camera.target.y - camera.offset.y, 100, WHITE);
-    DrawText("q to quit r to restart", camera.target.x - camera.offset.x, camera.target.y - camera.offset.y + 100, 50, WHITE);
+    DrawText("q to quit r to restart (the latter isn't implemented)", camera.target.x - camera.offset.x, camera.target.y - camera.offset.y + 100, 50, WHITE);
     if(IsKeyDown(closeKey))
       break;
     EndDrawing();

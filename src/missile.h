@@ -9,6 +9,8 @@
 #define missileSpeed 300
 #define missileCircl (circle){Vector2Zero(), 5, YELLOW}
 #define missileVelocityDampening .99f
+#define missileMaxDistance 3000
+#define missileMaxLifetime 3
 
 struct missile {
   bool valid;
@@ -16,6 +18,7 @@ struct missile {
   Vector2 velocity;
   circle* target;
   circle body;
+  float lifetime;
 };
 typedef struct missile Missile;
 

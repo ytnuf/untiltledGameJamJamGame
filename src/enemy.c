@@ -29,6 +29,7 @@ enemy initEnemy(Vector2 position, Player* player, circle avoidZone) {
   ret.prefDistMaxOffset = 0;
   ret.elapsedShotTime = 0;
   ret.seen = enemyCanSeePlayer(ret);
+  ret.valid = true;
   return ret;
 }
 
@@ -102,4 +103,8 @@ void manageEnemy(enemy* en, Missile* out, float delta, bool canShoot) {
   } else
     out->valid = false;
   navigate(en, delta);
+}
+
+bool enemyShouldDieToMissile(enemy* en, Missile* mis) {
+  return Vector2Distance(en->body.position, mis->body.position) <= enemyHitboxRadius + mis->body.radius && mis->lifetime >= missileHitboxLifetimeMin;
 }

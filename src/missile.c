@@ -4,6 +4,7 @@
 #include <raymath.h>
 #include <raylib.h>
 #include <stdlib.h>
+#include <stdio.h>
 
 #define stepCount 15
 
@@ -22,7 +23,7 @@ circle* getClosestTarget(circle* target, circle* arr, int arSize) {
 }
 
 Missile initMissile(Vector2 position, Vector2 velocity, float damage, circle* target) {
-  return (Missile){true, damage, velocity, target, (circle){position, missileCircl.radius, missileCircl.colour}};
+  return (Missile){true, damage, velocity, target, (circle){position, missileCircl.radius, missileCircl.colour}, 0};
 }
 
 Vector2 getVectorTo(Vector2 start, Vector2 end) {
@@ -30,7 +31,7 @@ Vector2 getVectorTo(Vector2 start, Vector2 end) {
 }
 
 bool missileShouldBreak(Missile* mis) {
-  return Vector2Distance(mis->body.position, mis->target->position) < mis->body.radius + mis->target->radius;
+  return Vector2Distance(mis->body.position, mis->target->position) < mis->body.radius + mis->target->radius || Vector2Distance(mis->body.position, mis->target->position) > missileMaxDistance;
 }
 
 void manageMissileMovement(Missile* mis, float delta, Player* plr) {
@@ -47,4 +48,7 @@ void manageMissileMovement(Missile* mis, float delta, Player* plr) {
     }
   }
   mis->velocity = Vector2Scale(mis->velocity, missileVelocityDampening);
+  mis->lifetime += delta;
+  mis->valid = mis->lifetime < missileMaxLifetime && mis->valid;
+  printf("%f", mis->lifetime);
 }

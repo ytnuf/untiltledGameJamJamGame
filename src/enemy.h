@@ -20,6 +20,8 @@
 #define enemyAvoidZonePrefDistance 100
 #define enemyKnockBack 50
 #define enemyFiringRange 650
+#define enemyHitboxRadius 35
+#define missileHitboxLifetimeMin .1
 
 #define enemyFric .8
 
@@ -38,6 +40,7 @@ struct enemy {
   float viewDistance;
   float targetDistance;
   bool seen;
+  bool valid;
 };
 typedef struct enemy enemy;
 
@@ -54,5 +57,7 @@ bool enemyTargetIsInPlanet(enemy* en);
 bool shouldSpawnMissile(enemy* en);
 
 void manageEnemy(enemy* en, Missile* out, float delta, bool canShoot);
+
+bool enemyShouldDieToMissile(enemy* en, Missile* mis);
 
 #endif
