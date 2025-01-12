@@ -93,9 +93,9 @@ Missile fireMissile(enemy* en) {
   return initMissile(en->body.position, Vector2Zero(), 10, &en->player->body);
 }
 
-void manageEnemy(enemy* en, Missile* out, float delta) {
+void manageEnemy(enemy* en, Missile* out, float delta, bool canShoot) {
   en->elapsedShotTime += delta;
-  if(shouldSpawnMissile(en)) {
+  if(shouldSpawnMissile(en) && canShoot) {
     en->elapsedShotTime = 0;
     *out = fireMissile(en);
     out->valid = true;

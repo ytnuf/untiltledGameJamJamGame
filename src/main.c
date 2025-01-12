@@ -8,6 +8,7 @@
 #include "player.h"
 #include "enemy.h"
 #include "stars.h"
+#include "healthbar.h"
 
 #define screenDimensions (Vector2){1000 * 16/9, 1000 / (16 / 9)}
 
@@ -15,6 +16,8 @@
 
 #define playerColour WHITE
 #define planetColour PURPLE
+
+#define playerDeadColour RED
 
 #define friction .95f
 
@@ -50,7 +53,11 @@ int main() {
 
   refreshStars(starArr, camera, true);
 
+  Healthbar test = {0, 0, 100, 2, 50, 10, WHITE, RED};
+
   while(!WindowShouldClose()) {
+    //this is just for health stuff
+    player.body.colour = ColorLerp(playerColour, playerDeadColour, 1 - player.health/player.maxHealth);
     if(currentState == deadScreenCode)
       goto deadScreen;
     float delta = GetFrameTime();
@@ -66,7 +73,7 @@ int main() {
 
     refreshStars(starArr, camera, false);
 
-    manageEnemy(&en, &tmp, delta);
+    manageEnemy(&en, &tmp, delta, true);
     if(tmp.valid) {
       missileCount++;
       missileArr = (Missile*)realloc(missileArr, misSize * missileCount);
@@ -103,6 +110,8 @@ int main() {
 
     DrawFPS(Vector2Subtract(camera.target,  camera.offset).x, Vector2Subtract(camera.target, camera.offset).y);
 
+    drawHealthbar(test);
+
     EndDrawing();
 
     if(IsKeyDown(closeKey))
@@ -110,12 +119,24 @@ int main() {
     continue;
 
   deadScreen:
+    //most of this is here so it feels like the world keeps going
+    refreshStars(starArr, camera, false);
+    playerApplyVelocity(&player);
+    player.velocity = Vector2Scale(player.velocity, friction);
+    manageEnemy(&en, &tmp, delta, false);
+    plrGlobalPos = (Vector2){player.body.position.y + GetScreenWidth()/2.0f, -player.body.position.x + GetScreenHeight()/2.0f};
+    camera.target = Vector2Lerp(camera.target, plrGlobalPos, cameraLatency);
+    camera.offset = (Vector2){GetScreenWidth() * .5, GetScreenHeight() * .5};
     BeginDrawing();
+    BeginMode2D(camera);
     ClearBackground(backroundColour);
-    DrawText("You are dead", 0, 0, 100, WHITE);
-    DrawText("q to quit", 0, 100, 100, WHITE);
     for(int i = 0; i < starCount; i++)
       drawCircle(&starArr[i]);
+    drawCircle(&planet);
+    drawCircle(&player.body);
+    drawCircle(&en.body);
+    DrawText("You are dead", camera.target.x - camera.offset.x, camera.target.y - camera.offset.y, 100, WHITE);
+    DrawText("q to quit r to restart", camera.target.x - camera.offset.x, camera.target.y - camera.offset.y + 100, 50, WHITE);
     if(IsKeyDown(closeKey))
       break;
     EndDrawing();
