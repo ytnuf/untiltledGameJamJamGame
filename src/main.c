@@ -70,20 +70,16 @@ int main() {
     ClearBackground(backroundColour);
 
     int i = 0;
-  loop:     //pardon the use of labels and stuff it just optomizes memory here
-    if(missileCount == 0 || i >= missileCount)
-      goto exitLoop;
-    if(!missileArr[i].valid) {
-      //this is where we pop from stack
-      missileArr = (Missile*)realloc(missileArr, misSize * (missileCount--));
-      goto loop;
+    while(missileCount != 0 && i < missileCount) {
+      if(!missileArr[i].valid) {
+        //this is where we pop from stack
+        missileArr = (Missile*)realloc(missileArr, misSize * (missileCount--));
+        continue;
+      }
+        manageMissileMovement(&missileArr[i], delta);
+        drawCircle(&missileArr[i].body);
+      i++;
     }
-      manageMissileMovement(&missileArr[i], delta);
-      drawCircle(&missileArr[i].body);
-    i++;
-    goto loop;
-  exitLoop:
-
     for(int i = 0; i < starCount; i++)
       drawCircle(&starArr[i]);
     drawCircle(&player.body);
