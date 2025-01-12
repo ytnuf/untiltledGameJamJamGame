@@ -24,13 +24,17 @@
 
 #define misSize sizeof(Missile)
 
+#define gameplayCode 0
+#define deadScreenCode 1
+#define startScreenCode 2
+
 int main() {
   srand(time(NULL));
   InitWindow(screenDimensions.x, screenDimensions.y, "cool game :)");
   SetTargetFPS(60);
   Camera2D camera = {Vector2Scale(screenDimensions, .5), Vector2Scale(screenDimensions, .5),0, 1};
 
-  Player player = {(circle){playerStartingPosition, playerR, playerColour}, Vector2Zero()};
+  Player player = {(circle){playerStartingPosition, playerR, playerColour}, Vector2Zero(), playerMaxHealth, playerMaxHealth};
 
   circle planet = {{5150, 5150}, 7000, planetColour};
 
@@ -42,7 +46,12 @@ int main() {
 
   circle* starArr = initStars(starCount);
 
+  short currentState = gameplayCode;
+  bool firstDeadFrame = true;
+
   while(!WindowShouldClose()) {
+    if(currentState == deadScreenCode)
+      goto deadScreen;
     float delta = GetFrameTime();
 
     handleMovment(&player, planet, delta);
@@ -54,7 +63,7 @@ int main() {
     camera.target = Vector2Lerp(camera.target, plrGlobalPos, cameraLatency);
     camera.offset = (Vector2){GetScreenWidth() * .5, GetScreenHeight() * .5};
 
-    refreshStars(starArr, camera);
+    refreshStars(starArr, camera, false);
 
     manageEnemy(&en, &tmp, delta);
     if(tmp.valid) {
@@ -62,6 +71,9 @@ int main() {
       missileArr = (Missile*)realloc(missileArr, misSize * missileCount);
       missileArr[missileCount - 1] = tmp;
     }
+
+    if(player.health == 0)
+      currentState = deadScreenCode;
 
     //draw
     BeginDrawing();
@@ -92,6 +104,20 @@ int main() {
 
     if(IsKeyDown(closeKey))
       break;
+    continue;
+
+  deadScreen:
+    refreshStars(starArr, camera, firstDeadFrame);
+    firstDeadFrame = !firstDeadFrame && firstDeadFrame;
+    BeginDrawing();
+    ClearBackground(backroundColour);
+    DrawText("You are dead", 0, 0, 100, WHITE);
+    DrawText("q to quit", 0, 100, 100, WHITE);
+    for(int i = 0; i < starCount; i++)
+      drawCircle(&starArr[i]);
+    if(IsKeyDown(closeKey))
+      break;
+    EndDrawing();
   }
   CloseWindow();
 

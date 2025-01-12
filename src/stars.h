@@ -11,6 +11,6 @@ circle* initStars(int stars);
 
 void destructStars(circle* starArr);
 
-void refreshStars(circle* starArr, Camera2D Camera);
+void refreshStars(circle* starArr, Camera2D Camera, bool force);
 
 #endif

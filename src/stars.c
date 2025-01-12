@@ -32,12 +32,12 @@ bool getPointIsOnScreenScaled(Vector2 point, Camera2D cam, float scale) {
   return inX && inY;
 }
 
-void refreshStars(circle* starArr, Camera2D Camera) {
+void refreshStars(circle* starArr, Camera2D Camera, bool force) {
   int i = 0;
   while(i < starCount) {
-    if(!getPointIsOnScreenScaled(starArr[i].position, Camera, starReloadDist)) {
+    if(!getPointIsOnScreenScaled(starArr[i].position, Camera, starReloadDist) || force) {
       Vector2 rand = applyCam(Vector2Scale(getRandomVector2OnScreen(Camera), starSpawnDist), Camera);
-      if(getPointIsOnScreenScaled(rand, Camera, 1))
+      if(getPointIsOnScreenScaled(rand, Camera, 1) && !force)
         continue;
       starArr[i].position = rand;
     }

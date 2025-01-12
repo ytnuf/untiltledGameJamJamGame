@@ -12,6 +12,7 @@
 #define playerR 20
 #define playerStartingPosition (Vector2){0, 0}
 #define playerSpeed 100
+#define playerMaxHealth 100
 
 struct Player {
   circle body;
