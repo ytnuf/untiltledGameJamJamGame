@@ -20,7 +20,7 @@
 #define enemyAvoidZonePrefDistance 100
 #define enemyKnockBack 50
 #define enemyFiringRange 650
-#define enemyHitboxRadius 35
+#define enemyHitboxRadius 70
 #define missileHitboxLifetimeMin .1
 
 #define enemyFric .8
