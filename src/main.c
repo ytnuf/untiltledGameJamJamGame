@@ -2,6 +2,7 @@
 #include <raymath.h>
 #include <stdlib.h>
 #include <time.h>
+#include "stdio.h"
 #include "circle.h"
 #include "missile.h"
 #include "player.h"
@@ -74,8 +75,7 @@ int main() {
       goto exitLoop;
     if(!missileArr[i].valid) {
       //this is where we pop from stack
-      missileArr = (Missile*)realloc(missileArr, misSize * (missileCount - 1));
-      missileCount = missileCount - 1;
+      missileArr = (Missile*)realloc(missileArr, misSize * (missileCount--));
       goto loop;
     }
       manageMissileMovement(&missileArr[i], delta);

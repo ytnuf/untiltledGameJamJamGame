@@ -83,7 +83,7 @@ void navigate(enemy* en, float delta) {
 }
 
 bool shouldSpawnMissile(enemy* en) {
-  return en->elapsedShotTime >= en->shotSpeed;
+  return en->elapsedShotTime >= en->shotSpeed && Vector2Distance(en->body.position, en->player->body.position) < enemyFiringRange;
 }
 
 Missile fireMissile(enemy* en) {

@@ -5,8 +5,13 @@
 #include <stdlib.h>
 
 #define starDist 1.01
-#define starSpawnDist 1.1
-#define starReloadDist 1.1
+#define starSpawnDist 1.3
+#define starReloadDist 1.4
+#define randomnessResolution 2
+
+float absf(float x) {
+  return x < 0 ? -x : x;
+}
 
 circle* initStars(int star) {
   circle* out = (circle*)malloc(sizeof(circle) * star);
@@ -21,20 +26,21 @@ void destructStars(circle* starArr) {
 }
 
 bool getPointIsOnScreenScaled(Vector2 point, Camera2D cam, float scale) {
-  Vector2 remFromCam = Vector2Add(Vector2Subtract(point, (Vector2){-cam.target.y, cam.target.x}), (Vector2){-cam.offset.y, cam.offset.x});
-  bool inX = abs(remFromCam.y) < GetScreenWidth() * scale / 2.0f;
-  bool inY = abs(remFromCam.x) < GetScreenHeight() * scale / 2.0f;
+  Vector2 remFromCam = removeCam(point, cam);
+  bool inX = absf(remFromCam.y) <= GetScreenWidth() * scale / 2.0f;
+  bool inY = absf(remFromCam.x) <= GetScreenHeight() * scale / 2.0f;
   return inX && inY;
 }
 
 void refreshStars(circle* starArr, Camera2D Camera) {
-  for(int i = 0; i < starCount; i++)
+  int i = 0;
+  while(i < starCount) {
     if(!getPointIsOnScreenScaled(starArr[i].position, Camera, starReloadDist)) {
-      Vector2 rand = Vector2Scale(getRandomVector2OnScreen(Camera), starSpawnDist);
-      while(getPointIsOnScreenScaled(rand, Camera, 1)) {
-        rand = Vector2Scale(getRandomVector2OnScreen(Camera), starSpawnDist);
-        if(!getPointIsOnScreenScaled(rand, Camera, starSpawnDist))
-          starArr[i].position = rand;
-      }
+      Vector2 rand = applyCam(Vector2Scale(getRandomVector2OnScreen(Camera), starSpawnDist), Camera);
+      if(getPointIsOnScreenScaled(rand, Camera, 1))
+        continue;
+      starArr[i].position = rand;
     }
+    i++;
+  }
 }
