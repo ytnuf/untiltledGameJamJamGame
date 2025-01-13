@@ -1,3 +1,5 @@
+#include "stdlib.h"
+#include <math.h>
 #include <raylib.h>
 #include <raymath.h>
 
@@ -107,4 +109,13 @@ void manageEnemy(enemy* en, Missile* out, float delta, bool canShoot) {
 
 bool enemyShouldDieToMissile(enemy* en, Missile* mis) {
   return Vector2Distance(en->body.position, mis->body.position) <= enemyHitboxRadius + mis->body.radius && mis->lifetime >= missileHitboxLifetimeMin;
+}
+
+void spawnEnemyAvoidArea(enemy* in) {
+  //pick random angle
+  float angle = ((float)rand() / (float)RAND_MAX) * 2 * M_PI;
+  //get the offset
+  Vector2 off = Vector2Scale((Vector2){cosf(angle), sinf(angle)}, in->avoidZone.radius);
+  Vector2 position = Vector2Add(off, in->avoidZone.position);
+  in->body.position = position;
 }

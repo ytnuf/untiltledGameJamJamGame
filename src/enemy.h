@@ -61,4 +61,6 @@ void manageEnemy(enemy* en, Missile* out, float delta, bool canShoot);
 
 bool enemyShouldDieToMissile(enemy* en, Missile* mis);
 
+void spawnEnemyAvoidArea(enemy* in);
+
 #endif

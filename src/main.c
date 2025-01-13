@@ -44,7 +44,7 @@ int main() {
 
   Player player = {(circle){playerStartingPosition, playerR, playerColour}, Vector2Zero(), playerMaxHealth, playerMaxHealth};
 
-  circle planet = {{5150, 5150}, 7000, planetColour};
+  circle planet = {{4150, 4150}, 5000, planetColour};
 
   printf("ALLOCATING MISSILES\n");
   int missileCount = 0;
@@ -105,9 +105,8 @@ int main() {
         continue;
       }
       for(int b = 0; b < enemyCount; b++) {
-        if(enemyShouldDieToMissile(&enemyArr[b], &missileArr[i])) {
+        if(enemyShouldDieToMissile(&enemyArr[b], &missileArr[i]))
           enemyArr[b].valid = false;
-        }
       }
       i++;
     }
@@ -163,6 +162,7 @@ int main() {
       //spawn enemy
       enemyArr = (enemy*)realloc(enemyArr, enSize * ++enemyCount);
       enemyArr[enemyCount - 1] = (enemy){(Vector2){0}, enemyDefCircle, planet, enemyMaxHp, enemyMaxHp, enemydefdmng, enemySpeed, &player, enemyPreferedAvoidDistance, 0, enemyDefShotSpeed, enemyViewDistance, enemyPrefDist, false, true};
+      spawnEnemyAvoidArea(&enemyArr[enemyCount - 1]);
     }
 
     if(IsKeyDown(closeKey))
@@ -190,6 +190,7 @@ int main() {
         orbCount += orbSpawnCount;
         orbArr = realloc(orbArr, orbSize * orbCount);
         spawnOrbs(enemyArr[i].body.position, &orbArr[orbCount - orbSpawnCount], orbSpawnCount, &player, &planet);
+        //pop time for realz
         enemyArr[i] = enemyArr[enemyCount - 1];
         enemyArr = (enemy*)realloc(enemyArr, enSize * enemyCount--);
         continue;
