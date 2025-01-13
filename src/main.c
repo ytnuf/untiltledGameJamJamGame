@@ -48,7 +48,7 @@ int main() {
 
   printf("ALLOCATING MISSILES\n");
   int missileCount = 0;
-  Missile* missileArr = (Missile*)calloc(missileCount, misSize);
+  Missile* missileArr = (Missile*)malloc(missileCount * misSize);
 
   circle* starArr = initStars(starCount);
   refreshStars(starArr, camera, true);
@@ -66,9 +66,9 @@ int main() {
   while(!WindowShouldClose()) {
     //this is just for health stuff
     player.body.colour = ColorLerp(playerColour, playerDeadColour, 1 - player.health/player.maxHealth);
+    float delta = GetFrameTime();
     if(currentState == deadScreenCode)
       goto deadScreen;
-    float delta = GetFrameTime();
 
     handleMovment(&player, planet, delta, true);
     playerApplyVelocity(&player);
@@ -118,7 +118,7 @@ int main() {
         //adding o r b s
         orbCount += orbSpawnCount;
         orbArr = realloc(orbArr, orbSize * orbCount);
-        spawnOrbs(enemyArr[i].body.position, &orbArr[orbCount - orbSpawnCount], orbSpawnCount, &player);
+        spawnOrbs(enemyArr[i].body.position, &orbArr[orbCount - orbSpawnCount], orbSpawnCount, &player, &planet);
         enemyArr[i] = enemyArr[enemyCount - 1];
         enemyArr = (enemy*)realloc(enemyArr, enSize * enemyCount--);
         continue;
@@ -182,11 +182,39 @@ int main() {
     ClearBackground(backroundColour);
     for(int i = 0; i < starCount; i++)
       drawCircle(&starArr[i]);
-    for(int i = 0; i < enemyCount; i++) {
-      drawCircle(&enemyArr[i].body);
+    i = 0;
+    while(enemyCount != 0 && i < enemyCount) {
+      if(!enemyArr[i].valid) {
+        //pop time
+        //adding o r b s
+        orbCount += orbSpawnCount;
+        orbArr = realloc(orbArr, orbSize * orbCount);
+        spawnOrbs(enemyArr[i].body.position, &orbArr[orbCount - orbSpawnCount], orbSpawnCount, &player, &planet);
+        enemyArr[i] = enemyArr[enemyCount - 1];
+        enemyArr = (enemy*)realloc(enemyArr, enSize * enemyCount--);
+        continue;
+      }
       Missile tmp;
+      tmp.valid = false;
       manageEnemy(&enemyArr[i], &tmp, delta, false);
+      drawCircle(&enemyArr[i].body);
+      i++;
     }
+    i = 0;
+    while(orbCount != 0 && i < orbCount) {
+      if(!orbArr[i].valid) {
+        //poopy time
+        applyDamage(&player, -healthRegenPerOrb);
+        orbArr[i] = orbArr[orbCount - 1];
+        orbArr = (Orb*)realloc(orbArr, orbSize * orbCount--);
+        continue;
+      }
+      manageOrb(&orbArr[i], delta);
+      drawCircle(&orbArr[i].body);
+      i++;
+    }
+    if(player.health > 0)
+      currentState = gameplayCode;
     handleMovment(&player, planet, delta, false);
     drawCircle(&planet);
     drawCircle(&player.body);

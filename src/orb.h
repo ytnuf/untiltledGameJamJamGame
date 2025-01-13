@@ -27,6 +27,7 @@ struct orb {
   bool approaching;
   bool valid;
   float lifetime;
+  circle* avoidArea;
 };
 typedef struct orb Orb;
 
@@ -38,6 +39,6 @@ Vector2 getPositionFromAngle(float angle, float distance);
 
 void manageOrb(Orb* ob, float delta);
 
-void spawnOrbs(Vector2 origin, Orb* orbArr, int spawnCount, Player* plr);
+void spawnOrbs(Vector2 origin, Orb* orbArr, int spawnCount, Player* plr, circle* avoidArea);
 
 #endif
