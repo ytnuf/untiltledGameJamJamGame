@@ -2,10 +2,10 @@
 #define orb_h
 
 #define orbIntakeRange 150
-#define orbSpeed 90
+#define orbSpeed -90
 #define orbFriction .95
-#define maxOrbSpeed 150
-#define minOrbSpeed 75
+#define maxOrbSpeed 50
+#define minOrbSpeed 25
 
 #include "circle.h"
 #include "player.h"
@@ -14,6 +14,7 @@
 
 #define orbColour GREEN
 #define orbRadius 5
+#define orbLifeToGrab .25
 
 struct orb {
   circle body;
@@ -24,6 +25,7 @@ struct orb {
   Player* plr;
   bool approaching;
   bool valid;
+  float lifetime;
 };
 typedef struct orb Orb;
 

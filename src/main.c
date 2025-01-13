@@ -9,6 +9,7 @@
 #include "player.h"
 #include "enemy.h"
 #include "stars.h"
+#include "orb.h"
 
 #define screenDimensions (Vector2){1000 * 16/9, 1000 / (16 / 9)}
 
@@ -60,6 +61,9 @@ int main() {
   refreshStars(starArr, camera, true);
 
   float elapsedTime = 0;
+
+  Orb test[10] = {0};
+  spawnOrbs(Vector2Zero(), test, 5, &player);
 
   while(!WindowShouldClose()) {
     //this is just for health stuff
@@ -133,10 +137,17 @@ int main() {
       drawCircle(&enemyArr[i].body);
       i++;
     }
-    for(int i = 0; i < starCount; i++)
+    for(i = 0; i < starCount; i++)
       drawCircle(&starArr[i]);
     drawCircle(&player.body);
     drawCircle(&planet);
+
+    for(i = 0; i < 10; i++) {
+      if(!test[i].valid)
+        continue;
+      manageOrb(&test[i], delta);
+      drawCircle(&test[i].body);
+    }
 
     DrawFPS(Vector2Subtract(camera.target,  camera.offset).x, Vector2Subtract(camera.target, camera.offset).y);
 
