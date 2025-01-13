@@ -28,6 +28,7 @@
 
 #define misSize sizeof(Missile)
 #define enSize sizeof(enemy)
+#define orbSize sizeof(Orb)
 
 #define enemySpawnTime 1
 
@@ -45,25 +46,22 @@ int main() {
 
   circle planet = {{5150, 5150}, 7000, planetColour};
 
-  Missile tmp = initMissile(Vector2Zero(), Vector2Zero(), 0, 0);
-  tmp.valid = 0;
-
-  unsigned int missileCount = 0;
+  printf("ALLOCATING MISSILES\n");
+  int missileCount = 0;
   Missile* missileArr = (Missile*)calloc(missileCount, misSize);
 
   circle* starArr = initStars(starCount);
+  refreshStars(starArr, camera, true);
 
-  unsigned int enemyCount;
+  int enemyCount;
   enemy* enemyArr = (enemy*)calloc(enemyCount, enSize);
 
   short currentState = gameplayCode;
 
-  refreshStars(starArr, camera, true);
-
   float elapsedTime = 0;
 
-  Orb test[10] = {0};
-  spawnOrbs(Vector2Zero(), test, 5, &player);
+  int orbCount = 0;
+  Orb* orbArr = (Orb*)malloc(orbCount * orbSize);
 
   while(!WindowShouldClose()) {
     //this is just for health stuff
@@ -83,12 +81,6 @@ int main() {
 
     refreshStars(starArr, camera, false);
 
-    if(tmp.valid) {
-      missileCount++;
-      missileArr = (Missile*)realloc(missileArr, misSize * missileCount);
-      missileArr[missileCount - 1] = tmp;
-    }
-
     if(player.health <= 0)
       currentState = deadScreenCode;
 
@@ -98,7 +90,7 @@ int main() {
 
     ClearBackground(backroundColour);
 
-    unsigned int i = 0;
+    int i = 0;
     while(missileCount != 0 && i < missileCount) {
       if(!missileArr[i].valid) {
         //this is where we pop from stack
@@ -123,6 +115,10 @@ int main() {
     while(enemyCount != 0 && i < enemyCount) {
       if(!enemyArr[i].valid) {
         //pop time
+        //adding o r b s
+        orbCount += orbSpawnCount;
+        orbArr = realloc(orbArr, orbSize * orbCount);
+        spawnOrbs(enemyArr[i].body.position, &orbArr[orbCount - orbSpawnCount], orbSpawnCount, &player);
         enemyArr[i] = enemyArr[enemyCount - 1];
         enemyArr = (enemy*)realloc(enemyArr, enSize * enemyCount--);
         continue;
@@ -142,11 +138,18 @@ int main() {
     drawCircle(&player.body);
     drawCircle(&planet);
 
-    for(i = 0; i < 10; i++) {
-      if(!test[i].valid)
+    i = 0;
+    while(orbCount != 0 && i < orbCount) {
+      if(!orbArr[i].valid) {
+        //poopy time
+        applyDamage(&player, -healthRegenPerOrb);
+        orbArr[i] = orbArr[orbCount - 1];
+        orbArr = (Orb*)realloc(orbArr, orbSize * orbCount--);
         continue;
-      manageOrb(&test[i], delta);
-      drawCircle(&test[i].body);
+      }
+      manageOrb(&orbArr[i], delta);
+      drawCircle(&orbArr[i].body);
+      i++;
     }
 
     DrawFPS(Vector2Subtract(camera.target,  camera.offset).x, Vector2Subtract(camera.target, camera.offset).y);
@@ -191,6 +194,8 @@ int main() {
     DrawText("q to quit r to restart (the latter isn't implemented)", camera.target.x - camera.offset.x, camera.target.y - camera.offset.y + 100, 50, WHITE);
     if(IsKeyDown(closeKey))
       break;
+    if(IsKeyDown(KEY_R))
+      system("killall game && ./game");
     EndDrawing();
   }
   CloseWindow();

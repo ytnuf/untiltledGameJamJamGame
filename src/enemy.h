@@ -22,6 +22,7 @@
 #define enemyFiringRange 650
 #define enemyHitboxRadius 70
 #define missileHitboxLifetimeMin .1
+#define orbSpawnCount 3
 
 #define enemyFric .8
 
