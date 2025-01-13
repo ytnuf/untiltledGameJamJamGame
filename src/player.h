@@ -33,6 +33,6 @@ bool applyDamage(Player* plr, float damage);
 
 Vector2 getAvoidanceForce(Player* plr, circle Planet, float delta);
 
-void handleMovment(Player* plr, circle Planet, float delta);
+void handleMovment(Player* plr, circle Planet, float delta, bool readInput);
 
 #endif

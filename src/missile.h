@@ -10,7 +10,7 @@
 #define missileCircl (circle){Vector2Zero(), 5, YELLOW}
 #define missileVelocityDampening .991f
 #define missileMaxDistance 3000
-#define missileMaxLifetime 3
+#define missileMaxLifetime 1.75
 
 struct missile {
   bool valid;

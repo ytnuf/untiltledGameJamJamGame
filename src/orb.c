@@ -28,6 +28,8 @@ void manageOrb(Orb* ob, float delta) {
     ob->body.position = Vector2Add(ob->body.position, ob->Velocity);
     ob->Velocity = Vector2Scale(ob->Velocity, orbFriction);
     ob->approaching = orbInRange(ob) && ob->lifetime >= orbLifeToGrab;
+    if(ob->approaching)
+      ob->distanceVel = 100 * delta;
     return;
   }
   ob->distance += ob->distanceVel;
@@ -42,6 +44,6 @@ void spawnOrbs(Vector2 origin, Orb orbArr[], int spawnCount, Player* plr) {
     float angle = ((float)rand() / (float)RAND_MAX) * 2 * M_PI;
     float speed = (((float)rand() / (float)RAND_MAX) * (maxOrbSpeed - minOrbSpeed)) + minOrbSpeed;
     Vector2 velocity = {cosf(angle) * speed, sinf(angle) * speed};
-    orbArr[i] = (Orb){(circle){origin, orbRadius, orbColour}, velocity, 0, 100, 0, plr, false, true, 0};
+    orbArr[i] = (Orb){(circle){origin, orbRadius, orbColour}, velocity, 0, orbStartingDist, 0, plr, false, true, 0};
   }
 }

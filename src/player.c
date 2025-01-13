@@ -41,7 +41,8 @@ void applyAvoidanceForce(Player* plr, circle planet, float delta) {
   plr->velocity = Vector2Add(getAvoidanceForce(plr, planet, delta), plr->velocity);
 }
 
-void handleMovment(Player* plr, circle planet, float delta) {
-  applyInputToVelocity(plr, delta);
+void handleMovment(Player* plr, circle planet, float delta, bool readInput) {
+  if(readInput)
+    applyInputToVelocity(plr, delta);
   applyAvoidanceForce(plr, planet, delta);
 }

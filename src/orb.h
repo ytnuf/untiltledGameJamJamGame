@@ -2,6 +2,7 @@
 #define orb_h
 
 #define orbIntakeRange 150
+#define orbStartingDist 200
 #define orbSpeed -90
 #define orbFriction .95
 #define maxOrbSpeed 50

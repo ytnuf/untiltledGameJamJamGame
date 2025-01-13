@@ -72,7 +72,7 @@ int main() {
       goto deadScreen;
     float delta = GetFrameTime();
 
-    handleMovment(&player, planet, delta);
+    handleMovment(&player, planet, delta, true);
     playerApplyVelocity(&player);
     player.velocity = Vector2Scale(player.velocity, friction);
 
@@ -179,6 +179,12 @@ int main() {
     ClearBackground(backroundColour);
     for(int i = 0; i < starCount; i++)
       drawCircle(&starArr[i]);
+    for(int i = 0; i < enemyCount; i++) {
+      drawCircle(&enemyArr[i].body);
+      Missile tmp;
+      manageEnemy(&enemyArr[i], &tmp, delta, false);
+    }
+    handleMovment(&player, planet, delta, false);
     drawCircle(&planet);
     drawCircle(&player.body);
     DrawText("You are dead", camera.target.x - camera.offset.x, camera.target.y - camera.offset.y, 100, WHITE);
