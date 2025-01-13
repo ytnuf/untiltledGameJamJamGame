@@ -27,8 +27,8 @@ void destructStars(circle* starArr) {
 
 bool getPointIsOnScreenScaled(Vector2 point, Camera2D cam, float scale) {
   Vector2 remFromCam = removeCam(point, cam);
-  bool inX = absf(remFromCam.y) <= GetScreenWidth() * scale / 2.0f;
-  bool inY = absf(remFromCam.x) <= GetScreenHeight() * scale / 2.0f;
+  bool inX = absf(remFromCam.y) <= GetScreenWidth() * scale / (2.0f * cam.zoom);
+  bool inY = absf(remFromCam.x) <= GetScreenHeight() * scale / (2.0f * cam.zoom);
   return inX && inY;
 }
 

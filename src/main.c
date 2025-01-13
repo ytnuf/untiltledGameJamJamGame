@@ -40,7 +40,7 @@ int main() {
   srand(time(NULL));
   InitWindow(screenDimensions.x, screenDimensions.y, "cool game :)");
   SetTargetFPS(60);
-  Camera2D camera = {Vector2Scale(screenDimensions, .5), Vector2Scale(screenDimensions, .5),0, 1};
+  Camera2D camera = {Vector2Scale(screenDimensions, .5), Vector2Scale(screenDimensions, .5),0, .9};
 
   Player player = {(circle){playerStartingPosition, playerR, playerColour}, Vector2Zero(), playerMaxHealth, playerMaxHealth};
 
@@ -191,7 +191,7 @@ int main() {
     drawCircle(&planet);
     drawCircle(&player.body);
     DrawText("You are dead", camera.target.x - camera.offset.x, camera.target.y - camera.offset.y, 100, WHITE);
-    DrawText("q to quit r to restart (the latter isn't implemented)", camera.target.x - camera.offset.x, camera.target.y - camera.offset.y + 100, 50, WHITE);
+    DrawText("q to quit r to restart)", camera.target.x - camera.offset.x, camera.target.y - camera.offset.y + 100, 50, WHITE);
     if(IsKeyDown(closeKey))
       break;
     if(IsKeyDown(KEY_R))

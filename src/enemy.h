@@ -13,7 +13,7 @@
 #define enemySpeed 100
 #define enemyDefShotSpeed 1.0f
 #define enemyDefCircle (circle){(Vector2){0, 0}, 10, RED}
-#define enemyViewDistance 600
+#define enemyViewDistance 900
 #define enemyPrefDistanceSmoothing .1
 #define enemyMinimumDistance 300
 #define enemyPreferedAvoidDistance 550

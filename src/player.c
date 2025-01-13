@@ -25,6 +25,8 @@ void applyInputToVelocity(Player* plr, float delta) {
 
 bool applyDamage(Player* plr, float damage) {
   plr->health -= damage;
+  if(plr->health > plr->maxHealth)
+    plr->health = plr->maxHealth;
   return plr->health <= 0;
 }
 

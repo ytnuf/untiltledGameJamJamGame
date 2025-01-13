@@ -26,7 +26,7 @@ Vector2 applyCam(Vector2 v, Camera2D cam) {
 //seed before.
 Vector2 getRandomVector2OnScreen(Camera2D cam) {
   Vector2 random = {randSingle() - .5, randSingle() - .5};
-  Vector2 randomScaled = {random.x * GetScreenHeight(), random.y * GetScreenWidth()};
+  Vector2 randomScaled = {random.x * GetScreenHeight(), random.y * GetScreenWidth() / cam.zoom};
   return randomScaled;
 }
 
