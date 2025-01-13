@@ -7,6 +7,7 @@
 #define orbFriction .95
 #define maxOrbSpeed 50
 #define minOrbSpeed 25
+#define orbAvoidRadius 100
 
 #include "circle.h"
 #include "player.h"

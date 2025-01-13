@@ -20,4 +20,6 @@ Vector2 removeCam(Vector2 v, Camera2D cam);
 
 Vector2 applyCam(Vector2 v, Camera2D cam);
 
+float randSingle();
+
 #endif

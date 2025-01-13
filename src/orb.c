@@ -20,6 +20,15 @@ Vector2 getOrbTargetPosition(Orb* ob) {
   return Vector2Add(getPositionFromAngle(angle, ob->distance), ob->plr->body.position);
 }
 
+Vector2 getOrbAvoidForce(Orb* ob, float delta) {
+  Vector2 dif = getVectorTo(ob->avoidArea->position, ob->body.position);
+  float distanceFromEdge = ob->avoidArea->radius - Vector2Distance(ob->avoidArea->position, ob->body.position);
+  if(distanceFromEdge < orbAvoidRadius)
+    return Vector2Zero();
+  float scalar = (ob->avoidArea->radius + orbAvoidRadius - Vector2Distance(ob->avoidArea->position, ob->body.position)) * delta;
+  return Vector2Scale(dif, scalar);
+}
+
 void manageOrb(Orb* ob, float delta) {
   if(!ob->valid)
     return;
@@ -27,6 +36,7 @@ void manageOrb(Orb* ob, float delta) {
   if(!ob->approaching) {
     ob->body.position = Vector2Add(ob->body.position, ob->Velocity);
     ob->Velocity = Vector2Scale(ob->Velocity, orbFriction);
+    ob->Velocity = Vector2Add(ob->Velocity, getOrbAvoidForce(ob, delta));
     ob->approaching = orbInRange(ob) && ob->lifetime >= orbLifeToGrab;
     if(ob->approaching)
       ob->distanceVel = 100 * delta;

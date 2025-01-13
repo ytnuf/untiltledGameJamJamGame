@@ -3,6 +3,7 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <time.h>
+#include "camera.h"
 #include "stdio.h"
 #include "circle.h"
 #include "missile.h"
@@ -40,18 +41,17 @@ int main() {
   srand(time(NULL));
   InitWindow(screenDimensions.x, screenDimensions.y, "cool game :)");
   SetTargetFPS(60);
-  Camera2D camera = {Vector2Scale(screenDimensions, .5), Vector2Scale(screenDimensions, .5),0, .9};
+  shakeCamera camera = {(Camera2D){Vector2Scale(screenDimensions, .5), Vector2Scale(screenDimensions, .5),0, .9}, 0, Vector2Zero(), Vector2Zero()};
 
   Player player = {(circle){playerStartingPosition, playerR, playerColour}, Vector2Zero(), playerMaxHealth, playerMaxHealth};
 
   circle planet = {{4150, 4150}, 5000, planetColour};
 
-  printf("ALLOCATING MISSILES\n");
   int missileCount = 0;
   Missile* missileArr = (Missile*)malloc(missileCount * misSize);
 
   circle* starArr = initStars(starCount);
-  refreshStars(starArr, camera, true);
+  refreshStars(starArr, camera.base, true);
 
   int enemyCount;
   enemy* enemyArr = (enemy*)calloc(enemyCount, enSize);
@@ -63,7 +63,10 @@ int main() {
   int orbCount = 0;
   Orb* orbArr = (Orb*)malloc(orbCount * orbSize);
 
+  applyCameraShake(&camera, 10, 10, 0);
   while(!WindowShouldClose()) {
+    cameraShakeF(&camera);
+    refreshCamera(&camera);
     //this is just for health stuff
     player.body.colour = ColorLerp(playerColour, playerDeadColour, 1 - player.health/player.maxHealth);
     float delta = GetFrameTime();
@@ -77,16 +80,16 @@ int main() {
     //camera stuff
     Vector2 plrGlobalPos = {player.body.position.y + GetScreenWidth()/2.0f, -player.body.position.x + GetScreenHeight()/2.0f};
     camera.target = Vector2Lerp(camera.target, plrGlobalPos, cameraLatency);
-    camera.offset = (Vector2){GetScreenWidth() * .5, GetScreenHeight() * .5};
+    camera.base.offset = (Vector2){GetScreenWidth() * .5, GetScreenHeight() * .5};
 
-    refreshStars(starArr, camera, false);
+    refreshStars(starArr, camera.base, false);
 
     if(player.health <= 0)
       currentState = deadScreenCode;
 
     //draw
     BeginDrawing();
-    BeginMode2D(camera);
+    BeginMode2D(camera.base);
 
     ClearBackground(backroundColour);
 
@@ -151,7 +154,7 @@ int main() {
       i++;
     }
 
-    DrawFPS(Vector2Subtract(camera.target,  camera.offset).x, Vector2Subtract(camera.target, camera.offset).y);
+    DrawFPS(Vector2Subtract(camera.target,  camera.base.offset).x, Vector2Subtract(camera.target, camera.base.offset).y);
 
     EndDrawing();
 
@@ -171,14 +174,14 @@ int main() {
 
   deadScreen:
     //most of this is here so it feels like the world keeps going
-    refreshStars(starArr, camera, false);
+    refreshStars(starArr, camera.base, false);
     playerApplyVelocity(&player);
     player.velocity = Vector2Scale(player.velocity, friction);
     plrGlobalPos = (Vector2){player.body.position.y + GetScreenWidth()/2.0f, -player.body.position.x + GetScreenHeight()/2.0f};
     camera.target = Vector2Lerp(camera.target, plrGlobalPos, cameraLatency);
-    camera.offset = (Vector2){GetScreenWidth() * .5, GetScreenHeight() * .5};
+    camera.base.offset = (Vector2){GetScreenWidth() * .5, GetScreenHeight() * .5};
     BeginDrawing();
-    BeginMode2D(camera);
+    BeginMode2D(camera.base);
     ClearBackground(backroundColour);
     for(int i = 0; i < starCount; i++)
       drawCircle(&starArr[i]);
@@ -219,8 +222,8 @@ int main() {
     handleMovment(&player, planet, delta, false);
     drawCircle(&planet);
     drawCircle(&player.body);
-    DrawText("You are dead", camera.target.x - camera.offset.x, camera.target.y - camera.offset.y, 100, WHITE);
-    DrawText("q to quit r to restart)", camera.target.x - camera.offset.x, camera.target.y - camera.offset.y + 100, 50, WHITE);
+    DrawText("You are dead", camera.base.target.x - camera.base.offset.x, camera.base.target.y - camera.base.offset.y, 100, WHITE);
+    DrawText("q to quit r to restart)", camera.base.target.x - camera.base.offset.x, camera.base.target.y - camera.base.offset.y + 100, 50, WHITE);
     if(IsKeyDown(closeKey))
       break;
     if(IsKeyDown(KEY_R))

@@ -4,11 +4,20 @@
 #include <raylib.h>
 #include <raymath.h>
 
-union shakeCamera {
-  Camera2D cam;
-};
-typedef union shakeCamera shakeCamera;
+#define shakeDampening .1
 
-void camearShake(Camera2D* camera, float angle, float magnitude);
+struct shakeCamera {
+  Camera2D base;
+  float jitterness;
+  Vector2 shakeDirection;
+  Vector2 target;
+};
+typedef struct shakeCamera shakeCamera;
+
+void cameraShakeF(shakeCamera* camera);
+
+void applyCameraShake(shakeCamera* camera, float magnitude, float jitterness, float angle);
+
+void refreshCamera(shakeCamera* cam);
 
 #endif
