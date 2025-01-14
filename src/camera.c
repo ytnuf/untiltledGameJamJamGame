@@ -13,7 +13,7 @@ Vector2 randVec() {
 
 void cameraShakeF(shakeCamera* camera) {
   Vector2 randV = Vector2Scale(randVec(), camera->jitterness);
-  Vector2 end = randV;
+  Vector2 end = Vector2Add(randV, camera->target);
   randV = Vector2Scale(randVec(), camera->jitterness);
   camera->shakeDirection = Vector2Add(camera->shakeDirection, randV);
   end = Vector2Add(end, camera->shakeDirection);
