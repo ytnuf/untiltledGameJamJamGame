@@ -134,7 +134,6 @@ int main() {
   int orbCount = 0;
   Orb* orbArr = (Orb*)malloc(orbCount * orbSize);
 
-  applyCameraShake(&camera, 10, 10, 0);
   while(!WindowShouldClose()) {
     cameraShakeF(&camera);
     refreshCamera(&camera);
