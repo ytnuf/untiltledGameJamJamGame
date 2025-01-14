@@ -17,13 +17,14 @@ have:
 gcc
 make
 raylib
+
 and run
 ```bash
 make
 ./game
 ```
 to run the game
-or just run the excecutable
+or just run the excecutable if you're on linux
 ```
 ./game
 ```
