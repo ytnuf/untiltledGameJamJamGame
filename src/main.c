@@ -190,7 +190,7 @@ int main() {
     drawCircle(&planet);
     drawBase(&base);
 
-    DrawText(TextFormat("score: %.0f", base.score), Vector2Subtract(camera.base.target, camera.base.offset).x, Vector2Subtract(camera.base.target, camera.base.offset).y, 100, WHITE);
+    DrawText(TextFormat("score: %.0f", base.score), camera.base.target.x - camera.base.offset.x / camera.base.zoom, camera.base.target.y - camera.base.offset.y / camera.base.zoom, 50, WHITE);
 
     EndDrawing();
 
