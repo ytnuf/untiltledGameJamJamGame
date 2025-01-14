@@ -44,10 +44,8 @@ void manageEnemies(enemy** enemyArr, int* enemyCount, Missile** missileArr, int*
       //pop time
       //adding o r b s
       *orbCount += orbSpawnCount;
-      printf("realloc size spawning orbs %d\n", (int)orbSize * *orbCount);
       *orbArr = realloc(*orbArr, orbSize * *orbCount);
-      spawnOrbs((*enemyArr)[i].body.position, &(*orbArr)[*orbCount - orbSpawnCount], orbSpawnCount, player, planet);
-      printf("realloc size deallocating enemies %d\n", (int)enSize * (*enemyCount) - 1);
+      spawnOrbs((*enemyArr)[i].body.position, &(*orbArr)[*orbCount - orbSpawnCount], orbSpawnCount, player, planet, (*enemyArr)[i].viewDistance);
       (*enemyArr)[i] = (*enemyArr)[*enemyCount - 1];
       (*enemyArr) = (enemy*)realloc(*enemyArr, enSize * (*enemyCount)--);
       continue;
@@ -70,7 +68,6 @@ void manageOrbs(Orb** orbArr, int* orbCount, Player* player, float delta, shakeC
     if(!(*orbArr)[i].valid) {
       //poopy time
       applyDamage(player, -healthRegenPerOrb);
-      printf("realloc size dellocating orbs %d\n", (int)orbSize * (*orbCount - 1));
       (*orbArr)[i] = (*orbArr)[*orbCount - 1];
       (*orbArr) = (Orb*)realloc((*orbArr), orbSize * (*orbCount)--);
       applyCameraShake(cam, 5, 4, (*orbArr)[i].angle);
@@ -102,6 +99,7 @@ void manageMissiles(Missile** missileArr, int* missileCount, Player* player, ene
         enemyArr[b].valid = false;
         (*missileArr)[i].valid = false;
         Vector2 vecTo = (*missileArr)[i].velocity;
+        enemyArr[b].viewDistance = atan2f(vecTo.x, vecTo.y);
         applyCameraShake(cam, 5, 10, atan2f(vecTo.x, vecTo.y));
         continue;
       }
@@ -135,10 +133,6 @@ int main() {
 
   int orbCount = 0;
   Orb* orbArr = (Orb*)malloc(orbCount * orbSize);
-
-  printf("orbSize: %d\n", (int)orbSize);
-  printf("enemySize: %d\n", (int)enSize);
-  printf("misSize: %d\n", (int)misSize);
 
   applyCameraShake(&camera, 10, 10, 0);
   while(!WindowShouldClose()) {

@@ -40,6 +40,6 @@ Vector2 getPositionFromAngle(float angle, float distance);
 
 void manageOrb(Orb* ob, float delta);
 
-void spawnOrbs(Vector2 origin, Orb* orbArr, int spawnCount, Player* plr, circle* avoidArea);
+void spawnOrbs(Vector2 origin, Orb* orbArr, int spawnCount, Player* plr, circle* avoidArea, float bias);
 
 #endif

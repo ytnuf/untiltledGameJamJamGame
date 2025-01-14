@@ -49,9 +49,10 @@ void manageOrb(Orb* ob, float delta) {
     ob->valid = false;
 }
 
-void spawnOrbs(Vector2 origin, Orb orbArr[], int spawnCount, Player* plr, circle* avoidArea) {
+void spawnOrbs(Vector2 origin, Orb orbArr[], int spawnCount, Player* plr, circle* avoidArea, float bias) {
   for(int i = 0; i < spawnCount; i++) {
-    float angle = ((float)rand() / (float)RAND_MAX) * 2 * M_PI;
+    float randVal = randSingle();
+    float angle = (((randVal * randVal * randVal * randVal) - .5f) * 2.0f * M_PI) + bias;
     float speed = (((float)rand() / (float)RAND_MAX) * (maxOrbSpeed - minOrbSpeed)) + minOrbSpeed;
     Vector2 velocity = {cosf(angle) * speed, sinf(angle) * speed};
     orbArr[i] = (Orb){(circle){origin, orbRadius, orbColour}, velocity, 0, orbStartingDist, 0, plr, false, true, 0, avoidArea};
