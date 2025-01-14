@@ -49,5 +49,6 @@ void manageMissileMovement(Missile* mis, float delta, Player* plr) {
   }
   mis->velocity = Vector2Scale(mis->velocity, missileVelocityDampening);
   mis->lifetime += delta;
-  mis->valid = mis->lifetime < missileMaxLifetime && mis->valid;
+  mis->body.colour.a += mis->lifetime > missileMaxLifetime ? -mis->body.colour.a * missileFadeScalar : 0;
+  mis->valid = mis->valid && mis->body.colour.a >= missileFadeThreshold;
 }

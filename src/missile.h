@@ -11,6 +11,8 @@
 #define missileVelocityDampening .991f
 #define missileMaxDistance 3000
 #define missileMaxLifetime 1.75
+#define missileFadeScalar .2
+#define missileFadeThreshold 5
 
 struct missile {
   bool valid;
