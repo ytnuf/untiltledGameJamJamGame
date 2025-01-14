@@ -64,7 +64,7 @@ void manageEnemies(enemy** enemyArr, int* enemyCount, Missile** missileArr, int*
   }
 }
 
-void manageOrbs(Orb** orbArr, int* orbCount, Player* player, float delta) {
+void manageOrbs(Orb** orbArr, int* orbCount, Player* player, float delta, shakeCamera* cam) {
   int i = 0;
   while(*orbCount != 0 && i < *orbCount) {
     if(!(*orbArr)[i].valid) {
@@ -73,6 +73,7 @@ void manageOrbs(Orb** orbArr, int* orbCount, Player* player, float delta) {
       printf("realloc size dellocating orbs %d\n", (int)orbSize * (*orbCount - 1));
       (*orbArr)[i] = (*orbArr)[*orbCount - 1];
       (*orbArr) = (Orb*)realloc((*orbArr), orbSize * (*orbCount)--);
+      applyCameraShake(cam, 5, 4, (*orbArr)[i].angle);
       continue;
     }
     manageOrb(&(*orbArr)[i], delta);
@@ -81,7 +82,7 @@ void manageOrbs(Orb** orbArr, int* orbCount, Player* player, float delta) {
   }
 }
 
-void manageMissiles(Missile** missileArr, int* missileCount, Player* player, enemy* enemyArr, int* enemyCount, circle* planet, float delta) {
+void manageMissiles(Missile** missileArr, int* missileCount, Player* player, enemy* enemyArr, int* enemyCount, circle* planet, float delta, shakeCamera* cam) {
   int i = 0;
   while(*missileCount != 0 && i < *missileCount) {
     if(!(*missileArr)[i].valid) {
@@ -100,6 +101,8 @@ void manageMissiles(Missile** missileArr, int* missileCount, Player* player, ene
       if(enemyShouldDieToMissile(&enemyArr[b], &(*missileArr)[i])) {
         enemyArr[b].valid = false;
         (*missileArr)[i].valid = false;
+        Vector2 vecTo = (*missileArr)[i].velocity;
+        applyCameraShake(cam, 5, 10, atan2f(vecTo.x, vecTo.y));
         continue;
       }
     }
@@ -168,9 +171,9 @@ int main() {
     ClearBackground(backroundColour);
 
     drawStars(starArr);
-    manageMissiles(&missileArr, &missileCount, &player, enemyArr, &enemyCount, &planet, delta);
+    manageMissiles(&missileArr, &missileCount, &player, enemyArr, &enemyCount, &planet, delta, &camera);
     manageEnemies(&enemyArr, &enemyCount, &missileArr, &missileCount, &orbArr, &orbCount, &player, &planet, delta);
-    manageOrbs(&orbArr, &orbCount, &player, delta);
+    manageOrbs(&orbArr, &orbCount, &player, delta, &camera);
 
     drawCircle(&player.body);
     drawCircle(&planet);
@@ -205,9 +208,9 @@ deadScreen:
     BeginMode2D(camera.base);
     ClearBackground(backroundColour);
     drawStars(starArr);
-    manageMissiles(&missileArr, &missileCount, &player, enemyArr, &enemyCount, &planet, delta);
+    manageMissiles(&missileArr, &missileCount, &player, enemyArr, &enemyCount, &planet, delta, &camera);
     manageEnemies(&enemyArr, &enemyCount, &missileArr, &missileCount, &orbArr, &orbCount, &player, &planet, delta);
-    manageOrbs(&orbArr, &orbCount, &player, delta);
+    manageOrbs(&orbArr, &orbCount, &player, delta, &camera);
     if(player.health > 0)
       currentState = gameplayCode;
     handleMovment(&player, planet, delta, false);
