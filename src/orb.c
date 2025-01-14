@@ -23,7 +23,7 @@ Vector2 getOrbTargetPosition(Orb* ob) {
 Vector2 getOrbAvoidForce(Orb* ob, float delta) {
   Vector2 dif = getVectorTo(ob->avoidArea->position, ob->body.position);
   float distanceFromEdge = ob->avoidArea->radius - Vector2Distance(ob->avoidArea->position, ob->body.position);
-  if(distanceFromEdge < orbAvoidRadius)
+  if(distanceFromEdge + orbAvoidRadius < 0)
     return Vector2Zero();
   float scalar = (ob->avoidArea->radius + orbAvoidRadius - Vector2Distance(ob->avoidArea->position, ob->body.position)) * delta;
   return Vector2Scale(dif, scalar);
