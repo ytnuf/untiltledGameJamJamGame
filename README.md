@@ -1,9 +1,22 @@
 # game jam thing
 
-this is a submission for the uhhh whachimacalit
+this is a submission for the untitled game jam 104
 
-untitled game jam 104
+# controls
 
-cool.
+wasd to move
+
+# build process
+
+have:
+gcc
+make
+raylib
+and run
+```bash
+make
+./game
+```
+to run the game
 
 untitledGameJamJamGame © 2025 by maningreen is licensed under CC BY-NC-SA 4.0 
