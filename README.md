@@ -1,5 +1,4 @@
-# your only move is dodge
-(yomi dodge not to be confused with yomi hustle)
+# untitledGameJamJamGame
 
 this is a submission for the untitled game jam 104
 
