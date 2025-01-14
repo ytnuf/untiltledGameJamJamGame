@@ -13,7 +13,7 @@
 #define missileMaxDistance 3000
 #define missileMaxLifetime 1.75
 #define missileFadeScalar .2
-#define missileFadeThreshold 5
+#define missileFadeThreshold 10
 #define missileDamageShakeMag 10
 #define missileDamageShakeJit 5
 
