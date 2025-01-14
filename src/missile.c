@@ -1,10 +1,10 @@
 #include "missile.h"
 #include "circle.h"
 #include "player.h"
+#include "camera.h"
 #include <raymath.h>
 #include <raylib.h>
 #include <stdlib.h>
-#include <stdio.h>
 
 #define stepCount 15
 
@@ -34,7 +34,7 @@ bool missileShouldBreak(Missile* mis) {
   return Vector2Distance(mis->body.position, mis->target->position) < mis->body.radius + mis->target->radius || Vector2Distance(mis->body.position, mis->target->position) > missileMaxDistance;
 }
 
-void manageMissileMovement(Missile* mis, float delta, Player* plr) {
+void manageMissileMovement(Missile* mis, float delta, Player* plr, shakeCamera* cam) {
   Vector2 velTerm = Vector2Scale(getVectorTo(mis->body.position, mis->target->position), missileSpeed * delta);
   mis->velocity = Vector2Add(velTerm, mis->velocity);
   //for this we have to step it goes so fast
@@ -44,6 +44,7 @@ void manageMissileMovement(Missile* mis, float delta, Player* plr) {
     mis->valid = !missileShouldBreak(mis);
     if(!mis->valid) {
       applyDamage(plr, mis->damage);
+      applyCameraShake(cam, missileDamageShakeMag, missileDamageShakeJit, atan2f(mis->velocity.x, mis->velocity.y));
       break;
     }
   }

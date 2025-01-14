@@ -88,7 +88,7 @@ void manageMissiles(Missile** missileArr, int* missileCount, Player* player, ene
       *missileArr = (Missile*)realloc(*missileArr, misSize * (*missileCount)--);
       continue;
     }
-    manageMissileMovement(&(*missileArr)[i], delta, player);
+    manageMissileMovement(&(*missileArr)[i], delta, player, cam);
     drawCircle(&(*missileArr)[i].body);
     if(Vector2Distance((*missileArr)[i].body.position, planet->position) <= (*missileArr)[i].body.radius + planet->radius) {
       (*missileArr)[i].valid = false;
