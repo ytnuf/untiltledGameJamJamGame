@@ -23,7 +23,7 @@ void applyInputToVelocity(Player* plr, float delta) {
   plr->velocity = Vector2Add(plr->velocity, input);
 }
 
-int applyDamage(Player* plr, float damage) {
+void applyDamage(Player* plr, float damage) {
   plr->health -= damage;
   if(plr->health > plr->maxHealth)
     plr->health = plr->maxHealth;
