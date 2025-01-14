@@ -11,6 +11,7 @@
 #include "enemy.h"
 #include "stars.h"
 #include "orb.h"
+#include "depositing.h"
 
 #define screenDimensions (Vector2){1000 * 16/9, 1000 / (16 / 9)}
 
@@ -134,6 +135,8 @@ int main() {
   int orbCount = 0;
   Orb* orbArr = (Orb*)malloc(orbCount * orbSize);
 
+  Base base = initBase(planet);
+
   while(!WindowShouldClose()) {
     cameraShakeF(&camera);
     refreshCamera(&camera);
@@ -169,6 +172,7 @@ int main() {
     manageOrbs(&orbArr, &orbCount, &player, delta, &camera);
 
     drawCircle(&player.body);
+    drawBase(&base);
     drawCircle(&planet);
 
     DrawFPS(Vector2Subtract(camera.target,  camera.base.offset).x, Vector2Subtract(camera.target, camera.base.offset).y);
