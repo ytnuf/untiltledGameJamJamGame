@@ -23,11 +23,12 @@ void applyInputToVelocity(Player* plr, float delta) {
   plr->velocity = Vector2Add(plr->velocity, input);
 }
 
-bool applyDamage(Player* plr, float damage) {
+int applyDamage(Player* plr, float damage) {
   plr->health -= damage;
   if(plr->health > plr->maxHealth)
     plr->health = plr->maxHealth;
-  return plr->health <= 0;
+  if(plr->health < 0)
+    plr->health = 0;
 }
 
 Vector2 getAvoidanceForce(Player* plr, circle planet, float delta) {

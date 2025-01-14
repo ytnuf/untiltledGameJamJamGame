@@ -29,7 +29,7 @@ Vector2 getInputVector(int l, int r, int u, int d);
 
 void applyInputToVelocity(Player* plr, float delta);
 
-bool applyDamage(Player* plr, float damage);
+void applyDamage(Player* plr, float damage);
 
 Vector2 getAvoidanceForce(Player* plr, circle Planet, float delta);
 
