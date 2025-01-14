@@ -6,11 +6,14 @@
 
 #define starCount 1000
 #define starColour WHITE
+#define starRadius 1
 
-circle* initStars(int stars);
+Vector2* initStars(int stars);
 
-void destructStars(circle* starArr);
+void destructStars(Vector2* starArr);
 
-void refreshStars(circle* starArr, Camera2D Camera, bool force);
+void refreshStars(Vector2* starArr, Camera2D Camera, bool force);
+
+void drawStars(Vector2* starArr);
 
 #endif

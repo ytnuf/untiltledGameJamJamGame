@@ -40,16 +40,16 @@
 void manageEnemies(enemy** enemyArr, int* enemyCount, Missile** missileArr, int* missileCount, Orb** orbArr, int* orbCount, Player* player, circle* planet, float delta) {
   int i = 0;
   while(*enemyCount != 0 && i < *enemyCount) {
-    printf("%d enemyCount\n", *enemyCount);
     if(!(*enemyArr)[i].valid) {
       //pop time
       //adding o r b s
-      printf("enemy %d not valid\n", i);
       *orbCount += orbSpawnCount;
+      printf("realloc size spawning orbs %d\n", (int)orbSize * *orbCount);
       *orbArr = realloc(*orbArr, orbSize * *orbCount);
       spawnOrbs((*enemyArr)[i].body.position, &(*orbArr)[*orbCount - orbSpawnCount], orbSpawnCount, player, planet);
+      printf("realloc size deallocating enemies %d\n", (int)enSize * (*enemyCount) - 1);
       (*enemyArr)[i] = (*enemyArr)[*enemyCount - 1];
-      (*enemyArr) = (enemy*)realloc(*enemyArr, enSize * *enemyCount--);
+      (*enemyArr) = (enemy*)realloc(*enemyArr, enSize * (*enemyCount)--);
       continue;
     }
     Missile tmp;
@@ -67,45 +67,41 @@ void manageEnemies(enemy** enemyArr, int* enemyCount, Missile** missileArr, int*
 void manageOrbs(Orb** orbArr, int* orbCount, Player* player, float delta) {
   int i = 0;
   while(*orbCount != 0 && i < *orbCount) {
-    printf("orb loop %d with orb count %d\n", i, *orbCount);
     if(!(*orbArr)[i].valid) {
       //poopy time
-      printf("healing and deallocationg\n");
       applyDamage(player, -healthRegenPerOrb);
+      printf("realloc size dellocating orbs %d\n", (int)orbSize * (*orbCount - 1));
       (*orbArr)[i] = (*orbArr)[*orbCount - 1];
       (*orbArr) = (Orb*)realloc((*orbArr), orbSize * (*orbCount)--);
       continue;
     }
-    printf("managing orb %d\n", i);
     manageOrb(&(*orbArr)[i], delta);
-    printf("drawing orb %d\n", i);
     drawCircle(&(*orbArr)[i].body);
     i++;
   }
 }
 
-void manageMissiles(Missile** missileArr, int* missileCount, Player* player, enemy** enemyArr, int* enemyCount, circle* planet, float delta) {
+void manageMissiles(Missile** missileArr, int* missileCount, Player* player, enemy* enemyArr, int* enemyCount, circle* planet, float delta) {
   int i = 0;
   while(*missileCount != 0 && i < *missileCount) {
-    printf("missile loop %d\n", i);
-    printf("checking if valid\n");
     if(!(*missileArr)[i].valid) {
       //this is where we pop from stack
       (*missileArr)[i] = (*missileArr)[*missileCount - 1];
       *missileArr = (Missile*)realloc(*missileArr, misSize * (*missileCount)--);
       continue;
     }
-    printf("managing missile %d\n", i);
     manageMissileMovement(&(*missileArr)[i], delta, player);
-    printf("drawing missile %d\n", i);
     drawCircle(&(*missileArr)[i].body);
     if(Vector2Distance((*missileArr)[i].body.position, planet->position) <= (*missileArr)[i].body.radius + planet->radius) {
       (*missileArr)[i].valid = false;
       continue;
     }
     for(int b = 0; b < *enemyCount; b++) {
-      if(enemyShouldDieToMissile(&(*enemyArr)[b], &(*missileArr)[i]))
-        (*enemyArr)[b].valid = false;
+      if(enemyShouldDieToMissile(&enemyArr[b], &(*missileArr)[i])) {
+        enemyArr[b].valid = false;
+        (*missileArr)[i].valid = false;
+        continue;
+      }
     }
     i++;
   }
@@ -124,11 +120,11 @@ int main() {
   int missileCount = 0;
   Missile* missileArr = (Missile*)malloc(missileCount * misSize);
 
-  circle* starArr = initStars(starCount);
+  Vector2* starArr = initStars(starCount);
   refreshStars(starArr, camera.base, true);
 
   int enemyCount = 0;
-  enemy* enemyArr = (enemy*)calloc(enemyCount, enSize);
+  enemy* enemyArr = (enemy*)malloc(enemyCount * enSize);
 
   short currentState = gameplayCode;
 
@@ -136,6 +132,10 @@ int main() {
 
   int orbCount = 0;
   Orb* orbArr = (Orb*)malloc(orbCount * orbSize);
+
+  printf("orbSize: %d\n", (int)orbSize);
+  printf("enemySize: %d\n", (int)enSize);
+  printf("misSize: %d\n", (int)misSize);
 
   applyCameraShake(&camera, 10, 10, 0);
   while(!WindowShouldClose()) {
@@ -167,10 +167,8 @@ int main() {
 
     ClearBackground(backroundColour);
 
-    for(int i = 0; i < starCount; i++)
-      drawCircle(&starArr[i]);
-    printf("%d\n", enemyCount);
-    manageMissiles(&missileArr, &missileCount, &player, &enemyArr, &enemyCount, &planet, delta);
+    drawStars(starArr);
+    manageMissiles(&missileArr, &missileCount, &player, enemyArr, &enemyCount, &planet, delta);
     manageEnemies(&enemyArr, &enemyCount, &missileArr, &missileCount, &orbArr, &orbCount, &player, &planet, delta);
     manageOrbs(&orbArr, &orbCount, &player, delta);
 
@@ -206,8 +204,10 @@ deadScreen:
     BeginDrawing();
     BeginMode2D(camera.base);
     ClearBackground(backroundColour);
-    for(int i = 0; i < starCount; i++)
-      drawCircle(&starArr[i]);
+    drawStars(starArr);
+    manageMissiles(&missileArr, &missileCount, &player, enemyArr, &enemyCount, &planet, delta);
+    manageEnemies(&enemyArr, &enemyCount, &missileArr, &missileCount, &orbArr, &orbCount, &player, &planet, delta);
+    manageOrbs(&orbArr, &orbCount, &player, delta);
     if(player.health > 0)
       currentState = gameplayCode;
     handleMovment(&player, planet, delta, false);

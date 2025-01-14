@@ -13,15 +13,15 @@ float absf(float x) {
   return x < 0 ? -x : x;
 }
 
-circle* initStars(int star) {
-  circle* out = (circle*)malloc(sizeof(circle) * star);
+Vector2* initStars(int star) {
+  Vector2* out = (Vector2*)malloc(sizeof(Vector2) * star);
   while(star-- > 0) {
-    out[star] = (circle){(Vector2){10000, 10000}, 1, starColour};
+    out[star] = (Vector2){10000, 10000};
   }
   return out;
 }
 
-void destructStars(circle* starArr) {
+void destructStars(Vector2* starArr) {
   free(starArr);
 }
 
@@ -32,15 +32,20 @@ bool getPointIsOnScreenScaled(Vector2 point, Camera2D cam, float scale) {
   return inX && inY;
 }
 
-void refreshStars(circle* starArr, Camera2D Camera, bool force) {
+void refreshStars(Vector2* starArr, Camera2D Camera, bool force) {
   int i = 0;
   while(i < starCount) {
-    if(!getPointIsOnScreenScaled(starArr[i].position, Camera, starReloadDist) || force) {
+    if(!getPointIsOnScreenScaled(starArr[i], Camera, starReloadDist) || force) {
       Vector2 rand = applyCam(Vector2Scale(getRandomVector2OnScreen(Camera), starSpawnDist), Camera);
       if(getPointIsOnScreenScaled(rand, Camera, 1) && !force)
         continue;
-      starArr[i].position = rand;
+      starArr[i] = rand;
     }
     i++;
   }
+}
+
+void drawStars(Vector2* starArr) {
+  for(int i = 0; i < starCount; i++)
+    drawCircle(&(circle){starArr[i], starRadius, starColour});
 }
