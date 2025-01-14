@@ -191,6 +191,7 @@ int main() {
     drawBase(&base);
 
     DrawFPS(Vector2Subtract(camera.target,  camera.base.offset).x, Vector2Subtract(camera.target, camera.base.offset).y);
+    DrawText(TextFormat("score: %.0f", base.score), Vector2Subtract(camera.base.target, camera.base.offset).x, Vector2Subtract(camera.base.target, camera.base.offset).y, 100, WHITE);
 
     EndDrawing();
 

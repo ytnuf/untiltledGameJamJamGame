@@ -11,13 +11,18 @@
 #define intakeRate 1
 #define intakeBorderColour WHITE
 #define intakeBorderThickn 20
+#define rotationRate .06
 
 struct base {
   float score;
   circle body;
   float intakeRadius;
+  float angle;
+  circle planet;
 };
 typedef struct base Base;
+
+void setBasePosition(Base* base);
 
 void addScoreToBase(Base* base, float score);
 

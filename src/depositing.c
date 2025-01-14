@@ -4,7 +4,6 @@
 #include <math.h>
 #include <raylib.h>
 #include <raymath.h>
-#include <stdio.h>
 
 Base initBase(circle planet) {
   Base out;
@@ -12,10 +11,14 @@ Base initBase(circle planet) {
   out.intakeRadius = baseIntakeRadius;
   out.body.radius = baseRadius;
   out.body.colour = baseColour;
-  float angle = randSingle() * 2 * M_PI;
-  out.body.position = Vector2Add((Vector2){cosf(angle) * planet.radius, sinf(angle) * planet.radius}, planet.position);
-  printf("%f\n", 180 * angle / M_PI);
+  out.planet = planet;
+  out.angle = randSingle() * 2 * M_PI;
+  setBasePosition(&out);
   return out;
+}
+
+void setBasePosition(Base* base) {
+  base->body.position = Vector2Add((Vector2){cosf(base->angle) * base->planet.radius, sinf(base->angle) * base->planet.radius}, base->planet.position);
 }
 
 void drawBase(Base* base) {
@@ -31,6 +34,8 @@ bool positionInRangeOfBase(Base* base, Vector2 point) {
 }
 
 void manageBase(Base* base, Player* player, float delta) {
+  base->angle += rotationRate * delta;
+  setBasePosition(base);
   if(!positionInRangeOfBase(base, player->body.position))
     return;
   float scoreToAdd = scorePerOrb * delta * intakeRate;
@@ -38,7 +43,6 @@ void manageBase(Base* base, Player* player, float delta) {
     scoreToAdd = player->score;
   player->score -= scoreToAdd;
   base->score += scoreToAdd;
-  printf("%f\n", base->score);
 }
 
 void drawBorder(Base* base) {
