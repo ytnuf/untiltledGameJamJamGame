@@ -33,10 +33,15 @@ bool positionInRangeOfBase(Base* base, Vector2 point) {
 void manageBase(Base* base, Player* player, float delta) {
   if(!positionInRangeOfBase(base, player->body.position))
     return;
-  float scoreToAdd = scorePerOrb * delta;
+  float scoreToAdd = scorePerOrb * delta * intakeRate;
   if(scoreToAdd > player->score)
     scoreToAdd = player->score;
   player->score -= scoreToAdd;
   base->score += scoreToAdd;
   printf("%f\n", base->score);
+}
+
+void drawBorder(Base* base) {
+  drawCircle(&(circle){base->body.position, base->intakeRadius, intakeBorderColour});
+  drawCircle(&(circle){base->body.position, base->intakeRadius - intakeBorderThickn, BLACK});
 }

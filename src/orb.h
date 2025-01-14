@@ -17,6 +17,7 @@
 #define orbColour GREEN
 #define orbRadius 5
 #define orbLifeToGrab .25
+#define defaultOrbChunkSize 100
 
 struct orb {
   circle body;
@@ -24,7 +25,7 @@ struct orb {
   float angle;
   float distance;
   float distanceVel;
-  Player* plr;
+  circle* target;
   bool approaching;
   bool valid;
   float lifetime;
@@ -40,6 +41,6 @@ Vector2 getPositionFromAngle(float angle, float distance);
 
 void manageOrb(Orb* ob, float delta);
 
-void spawnOrbs(Vector2 origin, Orb* orbArr, int spawnCount, Player* plr, circle* avoidArea, float bias);
+void spawnOrbs(Vector2 origin, Orb* orbArr, int spawnCount, circle* target, circle* avoidArea, float bias);
 
 #endif

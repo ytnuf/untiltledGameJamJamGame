@@ -38,7 +38,7 @@
 #define deadScreenCode 1
 #define startScreenCode 2
 
-void manageEnemies(enemy** enemyArr, int* enemyCount, Missile** missileArr, int* missileCount, Orb** orbArr, int* orbCount, Player* player, circle* planet, float delta) {
+void manageEnemies(enemy** enemyArr, int* enemyCount, Missile** missileArr, int* missileCount, Orb** orbArr, int* orbCount, Player* player, circle* planet, float delta, bool depositing) {
   int i = 0;
   while(*enemyCount != 0 && i < *enemyCount) {
     if(!(*enemyArr)[i].valid) {
@@ -46,11 +46,16 @@ void manageEnemies(enemy** enemyArr, int* enemyCount, Missile** missileArr, int*
       //adding o r b s
       *orbCount += orbSpawnCount;
       *orbArr = realloc(*orbArr, orbSize * *orbCount);
-      spawnOrbs((*enemyArr)[i].body.position, &(*orbArr)[*orbCount - orbSpawnCount], orbSpawnCount, player, planet, (*enemyArr)[i].viewDistance);
+      spawnOrbs((*enemyArr)[i].body.position, &(*orbArr)[*orbCount - orbSpawnCount], orbSpawnCount, &player->body, planet, (*enemyArr)[i].viewDistance);
       (*enemyArr)[i] = (*enemyArr)[*enemyCount - 1];
       (*enemyArr) = (enemy*)realloc(*enemyArr, enSize * (*enemyCount)--);
       continue;
     }
+    if(depositing) {
+      (*enemyArr)[i].seen = true;
+      (*enemyArr)[i].speed = enemySpeedAggro;
+    } else
+      (*enemyArr)[i].speed = enemySpeed;
     Missile tmp;
     tmp.valid = false;
     manageEnemy(&(*enemyArr)[i], &tmp, delta, true);
@@ -63,17 +68,24 @@ void manageEnemies(enemy** enemyArr, int* enemyCount, Missile** missileArr, int*
   }
 }
 
-void manageOrbs(Orb** orbArr, int* orbCount, Player* player, float delta, shakeCamera* cam) {
+void manageOrbs(Orb** orbArr, int* orbCount, Player* player, float delta, shakeCamera* cam, Base* base) {
   int i = 0;
   while(*orbCount != 0 && i < *orbCount) {
     if(!(*orbArr)[i].valid) {
       //poopy time
       applyDamage(player, -healthRegenPerOrb);
+      if((*orbArr)[i].target != &base->body)
+        player->score += scorePerOrb;
+      else
+        base->score += scorePerOrb;
       (*orbArr)[i] = (*orbArr)[*orbCount - 1];
       (*orbArr) = (Orb*)realloc((*orbArr), orbSize * (*orbCount)--);
       applyCameraShake(cam, 5, 4, (*orbArr)[i].angle);
-      player->score += scorePerOrb;
       continue;
+    }
+    if(positionInRangeOfBase(base, (*orbArr)[i].body.position)) {
+      (*orbArr)[i].target = &base->body;
+      (*orbArr)[i].approaching = true;
     }
     manageOrb(&(*orbArr)[i], delta);
     drawCircle(&(*orbArr)[i].body);
@@ -167,15 +179,16 @@ int main() {
 
     ClearBackground(backroundColour);
 
+    drawBorder(&base);
     drawStars(starArr);
     manageMissiles(&missileArr, &missileCount, &player, enemyArr, &enemyCount, &planet, delta, &camera);
-    manageEnemies(&enemyArr, &enemyCount, &missileArr, &missileCount, &orbArr, &orbCount, &player, &planet, delta);
-    manageOrbs(&orbArr, &orbCount, &player, delta, &camera);
+    manageEnemies(&enemyArr, &enemyCount, &missileArr, &missileCount, &orbArr, &orbCount, &player, &planet, delta, positionInRangeOfBase(&base, player.body.position));
+    manageOrbs(&orbArr, &orbCount, &player, delta, &camera, &base);
     manageBase(&base, &player, delta);
 
     drawCircle(&player.body);
-    drawBase(&base);
     drawCircle(&planet);
+    drawBase(&base);
 
     DrawFPS(Vector2Subtract(camera.target,  camera.base.offset).x, Vector2Subtract(camera.target, camera.base.offset).y);
 
@@ -193,6 +206,7 @@ int main() {
 
     if(IsKeyDown(closeKey))
       break;
+
   continue;
 
 deadScreen:
@@ -208,8 +222,8 @@ deadScreen:
     ClearBackground(backroundColour);
     drawStars(starArr);
     manageMissiles(&missileArr, &missileCount, &player, enemyArr, &enemyCount, &planet, delta, &camera);
-    manageEnemies(&enemyArr, &enemyCount, &missileArr, &missileCount, &orbArr, &orbCount, &player, &planet, delta);
-    manageOrbs(&orbArr, &orbCount, &player, delta, &camera);
+    manageEnemies(&enemyArr, &enemyCount, &missileArr, &missileCount, &orbArr, &orbCount, &player, &planet, delta, positionInRangeOfBase(&base, player.body.position));
+    manageOrbs(&orbArr, &orbCount, &player, delta, &camera, &base);
     if(player.health > 0)
       currentState = gameplayCode;
     handleMovment(&player, planet, delta, false);

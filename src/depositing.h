@@ -5,10 +5,12 @@
 #include "circle.h"
 #include "player.h"
 
-#define baseIntakeRadius 450
+#define baseIntakeRadius 650
 #define baseRadius 50
 #define baseColour GREEN
-#define intakeRate 10
+#define intakeRate 1
+#define intakeBorderColour WHITE
+#define intakeBorderThickn 20
 
 struct base {
   float score;
@@ -26,5 +28,7 @@ bool positionInRangeOfBase(Base* base, Vector2 position);
 void drawBase(Base* base);
 
 void manageBase(Base* base, Player* player, float delta);
+
+void drawBorder(Base* base);
 
 #endif
