@@ -2,9 +2,14 @@
 
 this is a submission for the untitled game jam 104
 
-# controls
+# how to play
 
 wasd to move
+
+redirect missiles at enemies to get orbs
+orbs heal and give you points you can deposit at the base
+when you deposit at the base your score increases but
+enemies also get faster and all start chasing you
 
 # build process
 

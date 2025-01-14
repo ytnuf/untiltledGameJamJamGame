@@ -190,7 +190,6 @@ int main() {
     drawCircle(&planet);
     drawBase(&base);
 
-    DrawFPS(Vector2Subtract(camera.target,  camera.base.offset).x, Vector2Subtract(camera.target, camera.base.offset).y);
     DrawText(TextFormat("score: %.0f", base.score), Vector2Subtract(camera.base.target, camera.base.offset).x, Vector2Subtract(camera.base.target, camera.base.offset).y, 100, WHITE);
 
     EndDrawing();
@@ -230,7 +229,7 @@ deadScreen:
     handleMovment(&player, planet, delta, false);
     drawCircle(&planet);
     drawCircle(&player.body);
-    DrawText("You are dead your score is", camera.base.target.x - camera.base.offset.x, camera.base.target.y - camera.base.offset.y, 100, WHITE);
+    DrawText(TextFormat("You are dead your score is %.0f", base.score), camera.base.target.x - camera.base.offset.x, camera.base.target.y - camera.base.offset.y, 100, WHITE);
     DrawText("q to quit r to restart)", camera.base.target.x - camera.base.offset.x, camera.base.target.y - camera.base.offset.y + 100, 50, WHITE);
     if(IsKeyDown(closeKey))
       break;
