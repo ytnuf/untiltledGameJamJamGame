@@ -3,10 +3,12 @@
 
 #include <raylib.h>
 #include "circle.h"
+#include "player.h"
 
-#define baseIntakeRadius 150
+#define baseIntakeRadius 450
 #define baseRadius 50
 #define baseColour GREEN
+#define intakeRate 10
 
 struct base {
   float score;
@@ -22,5 +24,7 @@ Base initBase(circle planet);
 bool positionInRangeOfBase(Base* base, Vector2 position);
 
 void drawBase(Base* base);
+
+void manageBase(Base* base, Player* player, float delta);
 
 #endif

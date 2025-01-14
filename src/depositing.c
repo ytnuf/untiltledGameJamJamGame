@@ -1,5 +1,6 @@
 #include "depositing.h"
 #include "circle.h"
+#include "player.h"
 #include <math.h>
 #include <raylib.h>
 #include <raymath.h>
@@ -23,4 +24,19 @@ void drawBase(Base* base) {
 
 void addScoreToBase(Base* base, float score) {
   base->score += score;
+}
+
+bool positionInRangeOfBase(Base* base, Vector2 point) {
+  return Vector2Distance(base->body.position, point) < baseIntakeRadius;
+}
+
+void manageBase(Base* base, Player* player, float delta) {
+  if(!positionInRangeOfBase(base, player->body.position))
+    return;
+  float scoreToAdd = scorePerOrb * delta;
+  if(scoreToAdd > player->score)
+    scoreToAdd = player->score;
+  player->score -= scoreToAdd;
+  base->score += scoreToAdd;
+  printf("%f\n", base->score);
 }

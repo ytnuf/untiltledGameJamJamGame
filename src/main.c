@@ -72,6 +72,7 @@ void manageOrbs(Orb** orbArr, int* orbCount, Player* player, float delta, shakeC
       (*orbArr)[i] = (*orbArr)[*orbCount - 1];
       (*orbArr) = (Orb*)realloc((*orbArr), orbSize * (*orbCount)--);
       applyCameraShake(cam, 5, 4, (*orbArr)[i].angle);
+      player->score += scorePerOrb;
       continue;
     }
     manageOrb(&(*orbArr)[i], delta);
@@ -170,6 +171,7 @@ int main() {
     manageMissiles(&missileArr, &missileCount, &player, enemyArr, &enemyCount, &planet, delta, &camera);
     manageEnemies(&enemyArr, &enemyCount, &missileArr, &missileCount, &orbArr, &orbCount, &player, &planet, delta);
     manageOrbs(&orbArr, &orbCount, &player, delta, &camera);
+    manageBase(&base, &player, delta);
 
     drawCircle(&player.body);
     drawBase(&base);
@@ -213,7 +215,7 @@ deadScreen:
     handleMovment(&player, planet, delta, false);
     drawCircle(&planet);
     drawCircle(&player.body);
-    DrawText("You are dead", camera.base.target.x - camera.base.offset.x, camera.base.target.y - camera.base.offset.y, 100, WHITE);
+    DrawText("You are dead your score is", camera.base.target.x - camera.base.offset.x, camera.base.target.y - camera.base.offset.y, 100, WHITE);
     DrawText("q to quit r to restart)", camera.base.target.x - camera.base.offset.x, camera.base.target.y - camera.base.offset.y + 100, 50, WHITE);
     if(IsKeyDown(closeKey))
       break;

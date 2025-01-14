@@ -14,12 +14,14 @@
 #define playerSpeed 100
 #define playerMaxHealth 100
 #define healthRegenPerOrb 8
+#define scorePerOrb 5
 
 struct Player {
   circle body;
   Vector2 velocity;
   float maxHealth;
   float health;
+  float score;
 };
 typedef struct Player Player;
 
