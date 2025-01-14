@@ -23,4 +23,9 @@ or just run the excecutable
 ./game
 ```
 
+or just run the excecutable
+```
+./game
+```
+
 untitledGameJamJamGame © 2025 by maningreen is licensed under CC BY-NC-SA 4.0 
