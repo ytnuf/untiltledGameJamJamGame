@@ -25,7 +25,8 @@ bool missileShouldBreak(Missile* mis) {
   return  distSqr < mis->target->radius * mis->target->radius || distSqr > maxDistSqr;
 }
 
-void manageMissileMovement(Missile* mis, float delta, Player* plr, shakeCamera* cam) {
+bool manageMissileMovement(Missile* mis, float delta, Player* plr, shakeCamera* cam) {
+  bool ret = false;
   Vector2 velTerm = Vector2Scale(getVectorTo(mis->body.position, mis->target->position), missileSpeed * delta);
   mis->velocity = Vector2Add(velTerm, mis->velocity);
   //for this we have to step it goes so fast
@@ -36,6 +37,7 @@ void manageMissileMovement(Missile* mis, float delta, Player* plr, shakeCamera* 
     if(!mis->valid) {
       applyDamage(plr, mis->damage);
       applyCameraShake(cam, missileDamageShakeMag, missileDamageShakeJit, atan2f(mis->velocity.x, mis->velocity.y));
+      ret = true;
       break;
     }
   }
@@ -43,4 +45,5 @@ void manageMissileMovement(Missile* mis, float delta, Player* plr, shakeCamera* 
   mis->lifetime += delta;
   mis->body.colour.a += mis->lifetime > missileMaxLifetime ? -mis->body.colour.a * missileFadeScalar : 0;
   mis->valid = mis->valid && mis->body.colour.a >= missileFadeThreshold;
+  return ret;
 }
