@@ -110,7 +110,8 @@ void manageOrbs(Orb** orbArr, int* orbCount, Player* player, float delta, shakeC
   }
 }
 
-void manageMissiles(Missile** missileArr, int* missileCount, Player* player, enemy* enemyArr, int* enemyCount, circle* planet, float delta, shakeCamera* cam, Vector2 globalScreenDimensions, Sound* missileBrokeSound, Sound* playerHitSound) {
+void manageMissiles(Missile** missileArr, enemy* enemyArr, int* missileCount, int* enemyCount, Player* player, circle* planet, shakeCamera* cam, Sound* missileBrokeSound, Sound* playerHitSound, float delta) {
+  Vector2 globalScreenDimensions = (Vector2){GetScreenWidth(), GetScreenHeight()};
   int i = 0;
   while(*missileCount != 0 && i < *missileCount) {
     Vector2 vecTo = (*missileArr)[i].velocity;
@@ -220,7 +221,7 @@ int main() {
 
     drawBorder(&base, globalScreenDimensions);
     drawStars(starArr, &camera.base);
-    manageMissiles(&missileArr, &missileCount, &player, enemyArr, &enemyCount, &planet, delta, &camera, globalScreenDimensions, &missileBrokeSound, &playerHitSound);
+    manageMissiles(&missileArr, enemyArr, &missileCount, &enemyCount, &player, &planet, &camera, &missileBrokeSound, &playerHitSound, delta);
     manageEnemies(&enemyArr, &enemyCount, &missileArr, &missileCount, &orbArr, &orbCount, &player, &planet, delta, positionInRangeOfBase(&base, player.body.position), &missileFiredSound, &enemyHitSound, globalScreenDimensions);
     manageOrbs(&orbArr, &orbCount, &player, delta, &camera, &base, globalScreenDimensions, &collectionSound);
     manageBase(&base, &player, &gainScoreSound, delta);
@@ -266,7 +267,7 @@ deadScreen:
     BeginMode2D(camera.base);
     ClearBackground(backroundColour);
     drawStars(starArr, &camera.base);
-    manageMissiles(&missileArr, &missileCount, &player, enemyArr, &enemyCount, &planet, delta, &camera, globalScreenDimensions, &missileBrokeSound, &playerHitSound);
+    manageMissiles(&missileArr, enemyArr, &missileCount, &enemyCount, &player, &planet, &camera, &missileBrokeSound, &playerHitSound, delta);
     manageEnemies(&enemyArr, &enemyCount, &missileArr, &missileCount, &orbArr, &orbCount, &player, &planet, delta, positionInRangeOfBase(&base, player.body.position), &missileFiredSound, &enemyHitSound, globalScreenDimensions);
     manageOrbs(&orbArr, &orbCount, &player, delta, &camera, &base, globalScreenDimensions, &collectionSound);
     if(player.health > 0)
