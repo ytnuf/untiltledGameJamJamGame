@@ -44,6 +44,5 @@ void manageBase(Base* base, Player* player, float delta) {
 }
 
 void drawBorder(Base* base, Vector2 screenDimensions) {
-  drawCircle(&(circle){base->body.position, base->intakeRadius, intakeBorderColour}, screenDimensions);
-  drawCircle(&(circle){base->body.position, base->intakeRadius - intakeBorderThickn, BLACK}, screenDimensions);
+  DrawCircleLinesV((Vector2){base->body.position.y + screenDimensions.x / 2.0f, -base->body.position.x + screenDimensions.y / 2.0f}, base->intakeRadius, intakeBorderColour);
 }

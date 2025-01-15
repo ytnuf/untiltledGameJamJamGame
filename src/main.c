@@ -93,10 +93,10 @@ void manageOrbs(Orb** orbArr, int* orbCount, Player* player, float delta, shakeC
       applyCameraShake(cam, 9, 10, (*orbArr)[i].angle);
       continue;
     }
-    if(positionInRangeOfBase(base, (*orbArr)[i].body.position)) {
+    /*if(positionInRangeOfBase(base, (*orbArr)[i].body.position)) {
       (*orbArr)[i].target = &base->body;
       (*orbArr)[i].approaching = true;
-    }
+    }*/
     manageOrb(&(*orbArr)[i], delta);
     drawCircle(&(*orbArr)[i].body, globalScreenDimensions);
     i++;
