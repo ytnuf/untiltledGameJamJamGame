@@ -40,7 +40,7 @@ void manageOrb(Orb* ob, float delta) {
     ob->approaching = orbInRange(ob) && ob->lifetime >= orbLifeToGrab;
     if(ob->approaching) {
       ob->distanceVel = 200 * delta;
-      ob->distance = ceilf(Vector2Distance(ob->body.position, ob->target->position) / defaultOrbChunkSize) * defaultOrbChunkSize;
+      ob->distance = (floorf(Vector2Distance(ob->body.position, ob->target->position) / defaultOrbChunkSize) + 1) * defaultOrbChunkSize;
     }
     return;
   }

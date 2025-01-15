@@ -5,12 +5,12 @@
 #include "circle.h"
 #include "player.h"
 
-#define baseIntakeRadius 650
+#define baseIntakeRadius 1200
 #define baseRadius 50
 #define baseColour GREEN
 #define intakeRate 1
 #define intakeBorderColour WHITE
-#define intakeBorderThickn 20
+#define intakeBorderThickn 10
 #define rotationRate .06
 
 struct base {

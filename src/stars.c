@@ -9,10 +9,6 @@
 #define starReloadDist 1.4
 #define randomnessResolution 2
 
-float absf(float x) {
-  return x < 0 ? -x : x;
-}
-
 Vector2* initStars(int star) {
   Vector2* out = (Vector2*)malloc(sizeof(Vector2) * star);
   while(star-- > 0) {
@@ -25,19 +21,21 @@ void destructStars(Vector2* starArr) {
   free(starArr);
 }
 
-bool getPointIsOnScreenScaled(Vector2 point, Camera2D cam, float scale) {
+bool getPointIsOnScreenScaled(Vector2 point, Vector2 screenDems, Camera2D cam, float scale) {
   Vector2 remFromCam = removeCam(point, cam);
-  bool inX = absf(remFromCam.y) <= GetScreenWidth() * scale / (2.0f * cam.zoom);
-  bool inY = absf(remFromCam.x) <= GetScreenHeight() * scale / (2.0f * cam.zoom);
+  bool inX = (remFromCam.y < 0 ? -remFromCam.y : remFromCam.y) <= screenDems.x * scale / (2.0f * cam.zoom);
+  bool inY = (remFromCam.x < 0 ? -remFromCam.x : remFromCam.x) <= screenDems.y * scale / (2.0f * cam.zoom);
   return inX && inY;
 }
 
 void refreshStars(Vector2* starArr, Camera2D Camera, bool force) {
   int i = 0;
+  bool nforce = !force;
+  Vector2 screenDems = {GetScreenWidth(), GetScreenHeight()};
   while(i < starCount) {
-    if(!getPointIsOnScreenScaled(starArr[i], Camera, starReloadDist) || force) {
+    if(!getPointIsOnScreenScaled(starArr[i], screenDems, Camera, starReloadDist) || force) {
       Vector2 rand = applyCam(Vector2Scale(getRandomVector2OnScreen(Camera), starSpawnDist), Camera);
-      if(getPointIsOnScreenScaled(rand, Camera, 1) && !force)
+      if(getPointIsOnScreenScaled(rand, screenDems, Camera, 1) && nforce)
         continue;
       starArr[i]= rand;
     }

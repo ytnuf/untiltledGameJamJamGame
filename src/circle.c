@@ -28,5 +28,5 @@ Vector2 getRandomVector2OnScreen(Camera2D cam) {
 }
 
 Vector2 removeCam(Vector2 v, Camera2D cam) {
-  return Vector2Subtract(Vector2Add(v, (Vector2){-cam.offset.y, cam.offset.x}), (Vector2){-cam.target.y, cam.target.x});
+  return Vector2Add(v, (Vector2){-cam.offset.y + cam.target.y, cam.offset.x - cam.target.x});
 }

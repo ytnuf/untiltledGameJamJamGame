@@ -5,6 +5,8 @@
 #include <raylib.h>
 #include <raymath.h>
 
+const float intakeRadSqr = baseIntakeRadius * baseIntakeRadius;
+
 Base initBase(circle planet) {
   Base out;
   out.score = 0;
@@ -25,12 +27,8 @@ void drawBase(Base* base, Vector2 screenDimensions) {
   drawCircle(&base->body, screenDimensions);
 }
 
-void addScoreToBase(Base* base, float score) {
-  base->score += score;
-}
-
 bool positionInRangeOfBase(Base* base, Vector2 point) {
-  return Vector2Distance(base->body.position, point) < baseIntakeRadius;
+  return Vector2DistanceSqr(base->body.position, point) < intakeRadSqr;
 }
 
 void manageBase(Base* base, Player* player, float delta) {

@@ -60,7 +60,7 @@ Vector2 enemyGetTargetPosition(enemy* en) {
 }
 
 bool enemyTargetInPlanet(enemy* en) {
-  return Vector2Distance(en->avoidZone.position, enemyGetTargetPosition(en)) < en->avoidZone.radius;
+  return Vector2DistanceSqr(en->avoidZone.position, enemyGetTargetPosition(en)) < en->avoidZone.radius * en->avoidZone.radius;
 }
 
 void navigate(enemy* en, float delta) {

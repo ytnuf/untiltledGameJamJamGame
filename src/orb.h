@@ -17,7 +17,7 @@
 #define orbColour GREEN
 #define orbRadius 5
 #define orbLifeToGrab .25
-#define defaultOrbChunkSize 100
+#define defaultOrbChunkSize 100.0f
 
 struct orb {
   circle body;

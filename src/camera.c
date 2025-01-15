@@ -8,7 +8,7 @@ float randSingleFull() {
 }
 
 Vector2 randVec() {
-  return Vector2Normalize((Vector2){randSingleFull(), randSingleFull()});
+  return (Vector2){randSingleFull(), randSingleFull()};
 }
 
 void cameraShakeF(shakeCamera* camera) {
