@@ -8,19 +8,7 @@
 
 #define stepCount 15
 
-circle* getClosestTarget(circle* target, circle* arr, int arSize) {
-  int closestTIndex = -1;
-  float closestDist = RAND_MAX;
-  while(--arSize >= 0) {
-    float dist = Vector2Distance(target->position, arr[arSize].position);
-    if(dist > closestDist)
-      continue;
-    
-    closestDist = dist;
-    closestTIndex = arSize;
-  }
-  return &arr[closestTIndex];
-}
+const float maxDistSqr = missileMaxDistance * missileMaxDistance;
 
 Missile initMissile(Vector2 position, Vector2 velocity, float damage, circle* target) {
   return (Missile){true, damage, velocity, target, (circle){position, missileCircl.radius, missileCircl.colour}, 0};
@@ -31,7 +19,10 @@ Vector2 getVectorTo(Vector2 start, Vector2 end) {
 }
 
 bool missileShouldBreak(Missile* mis) {
-  return Vector2Distance(mis->body.position, mis->target->position) < mis->body.radius + mis->target->radius || Vector2Distance(mis->body.position, mis->target->position) > missileMaxDistance;
+  Vector2 bodyPos = mis->body.position;
+  Vector2 tarBodPos = mis->target->position;
+  float distSqr = Vector2DistanceSqr(bodyPos, tarBodPos);
+  return  distSqr < mis->target->radius * mis->target->radius || distSqr > maxDistSqr;
 }
 
 void manageMissileMovement(Missile* mis, float delta, Player* plr, shakeCamera* cam) {

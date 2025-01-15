@@ -38,7 +38,12 @@
 #define deadScreenCode 1
 #define startScreenCode 2
 
-void manageEnemies(enemy** enemyArr, int* enemyCount, Missile** missileArr, int* missileCount, Orb** orbArr, int* orbCount, Player* player, circle* planet, float delta, bool depositing) {
+#define missileFiredPath "resources/audio/missileFired.wav"
+#define missileBrokePath "resources/audio/missileBroke.wav"
+#define playerHitPath "resources/audio/playerHit.wav"
+#define playerDeadPath "resources/audio/playerDead.wav"
+
+void manageEnemies(enemy** enemyArr, int* enemyCount, Missile** missileArr, int* missileCount, Orb** orbArr, int* orbCount, Player* player, circle* planet, float delta, bool depositing, Sound* missileFiredSound, Vector2 globalScreenDimensions) {
   int i = 0;
   while(*enemyCount != 0 && i < *enemyCount) {
     if(!(*enemyArr)[i].valid) {
@@ -58,17 +63,17 @@ void manageEnemies(enemy** enemyArr, int* enemyCount, Missile** missileArr, int*
       (*enemyArr)[i].speed = enemySpeed;
     Missile tmp;
     tmp.valid = false;
-    manageEnemy(&(*enemyArr)[i], &tmp, delta, true);
+    manageEnemy(&(*enemyArr)[i], &tmp, delta, true, missileFiredSound);
     if(tmp.valid) {
       *missileArr = realloc(*missileArr, misSize * ++(*missileCount));
       (*missileArr)[*missileCount - 1] = tmp;
     }
-    drawCircle(&(*enemyArr)[i].body);
+    drawCircle(&(*enemyArr)[i].body, globalScreenDimensions);
     i++;
   }
 }
 
-void manageOrbs(Orb** orbArr, int* orbCount, Player* player, float delta, shakeCamera* cam, Base* base) {
+void manageOrbs(Orb** orbArr, int* orbCount, Player* player, float delta, shakeCamera* cam, Base* base, Vector2 globalScreenDimensions) {
   int i = 0;
   while(*orbCount != 0 && i < *orbCount) {
     if(!(*orbArr)[i].valid) {
@@ -88,12 +93,12 @@ void manageOrbs(Orb** orbArr, int* orbCount, Player* player, float delta, shakeC
       (*orbArr)[i].approaching = true;
     }
     manageOrb(&(*orbArr)[i], delta);
-    drawCircle(&(*orbArr)[i].body);
+    drawCircle(&(*orbArr)[i].body, globalScreenDimensions);
     i++;
   }
 }
 
-void manageMissiles(Missile** missileArr, int* missileCount, Player* player, enemy* enemyArr, int* enemyCount, circle* planet, float delta, shakeCamera* cam) {
+void manageMissiles(Missile** missileArr, int* missileCount, Player* player, enemy* enemyArr, int* enemyCount, circle* planet, float delta, shakeCamera* cam, Vector2 globalScreenDimensions) {
   int i = 0;
   while(*missileCount != 0 && i < *missileCount) {
     if(!(*missileArr)[i].valid) {
@@ -103,7 +108,7 @@ void manageMissiles(Missile** missileArr, int* missileCount, Player* player, ene
       continue;
     }
     manageMissileMovement(&(*missileArr)[i], delta, player, cam);
-    drawCircle(&(*missileArr)[i].body);
+    drawCircle(&(*missileArr)[i].body, globalScreenDimensions);
     if(Vector2Distance((*missileArr)[i].body.position, planet->position) <= (*missileArr)[i].body.radius + planet->radius) {
       (*missileArr)[i].valid = false;
       continue;
@@ -125,6 +130,15 @@ void manageMissiles(Missile** missileArr, int* missileCount, Player* player, ene
 int main() {
   srand(time(NULL));
   InitWindow(screenDimensions.x, screenDimensions.y, "cool game :)");
+  InitAudioDevice();
+
+  /*
+  Sound playerDeadSound = LoadSound(playerDeadPath);
+  Sound playerHitSound = LoadSound(playerHitPath);
+  Sound missileBrokeSound = LoadSound(missileBrokePath);
+  */
+  Sound missileFiredSound = LoadSound(missileFiredPath);
+
   SetTargetFPS(60);
   shakeCamera camera = {(Camera2D){Vector2Scale(screenDimensions, .5), Vector2Scale(screenDimensions, .5),0, .9}, 0, Vector2Zero(), Vector2Zero()};
 
@@ -150,7 +164,11 @@ int main() {
 
   Base base = initBase(planet);
 
+  Vector2 globalScreenDimensions;
+
+
   while(!WindowShouldClose()) {
+    globalScreenDimensions = (Vector2){GetScreenWidth(), GetScreenHeight()};
     cameraShakeF(&camera);
     refreshCamera(&camera);
     //this is just for health stuff
@@ -179,16 +197,18 @@ int main() {
 
     ClearBackground(backroundColour);
 
-    drawBorder(&base);
-    drawStars(starArr);
-    manageMissiles(&missileArr, &missileCount, &player, enemyArr, &enemyCount, &planet, delta, &camera);
-    manageEnemies(&enemyArr, &enemyCount, &missileArr, &missileCount, &orbArr, &orbCount, &player, &planet, delta, positionInRangeOfBase(&base, player.body.position));
-    manageOrbs(&orbArr, &orbCount, &player, delta, &camera, &base);
+    drawBorder(&base, globalScreenDimensions);
+    drawStars(starArr, &camera.base);
+    manageMissiles(&missileArr, &missileCount, &player, enemyArr, &enemyCount, &planet, delta, &camera, globalScreenDimensions);
+    manageEnemies(&enemyArr, &enemyCount, &missileArr, &missileCount, &orbArr, &orbCount, &player, &planet, delta, positionInRangeOfBase(&base, player.body.position), &missileFiredSound, globalScreenDimensions);
+    manageOrbs(&orbArr, &orbCount, &player, delta, &camera, &base, globalScreenDimensions);
     manageBase(&base, &player, delta);
 
-    drawCircle(&player.body);
-    drawCircle(&planet);
-    drawBase(&base);
+    DrawFPS(camera.base.target.x - camera.base.offset.x, camera.base.target.y - camera.base.offset.y);
+
+    drawCircle(&player.body, globalScreenDimensions);
+    drawCircle(&planet, globalScreenDimensions);
+    drawBase(&base, globalScreenDimensions);
 
     DrawText(TextFormat("score: %.0f", base.score), camera.base.target.x - camera.base.offset.x / camera.base.zoom, camera.base.target.y - camera.base.offset.y / camera.base.zoom, 50, WHITE);
 
@@ -220,15 +240,15 @@ deadScreen:
     BeginDrawing();
     BeginMode2D(camera.base);
     ClearBackground(backroundColour);
-    drawStars(starArr);
-    manageMissiles(&missileArr, &missileCount, &player, enemyArr, &enemyCount, &planet, delta, &camera);
-    manageEnemies(&enemyArr, &enemyCount, &missileArr, &missileCount, &orbArr, &orbCount, &player, &planet, delta, positionInRangeOfBase(&base, player.body.position));
-    manageOrbs(&orbArr, &orbCount, &player, delta, &camera, &base);
+    drawStars(starArr, &camera.base);
+    manageMissiles(&missileArr, &missileCount, &player, enemyArr, &enemyCount, &planet, delta, &camera, globalScreenDimensions);
+    manageEnemies(&enemyArr, &enemyCount, &missileArr, &missileCount, &orbArr, &orbCount, &player, &planet, delta, positionInRangeOfBase(&base, player.body.position), &missileFiredSound, globalScreenDimensions);
+    manageOrbs(&orbArr, &orbCount, &player, delta, &camera, &base, globalScreenDimensions);
     if(player.health > 0)
       currentState = gameplayCode;
     handleMovment(&player, planet, delta, false);
-    drawCircle(&planet);
-    drawCircle(&player.body);
+    drawCircle(&planet, globalScreenDimensions);
+    drawCircle(&player.body, globalScreenDimensions);
     DrawText(TextFormat("You are dead your score is %.0f", base.score), camera.base.target.x - camera.base.offset.x, camera.base.target.y - camera.base.offset.y, 100, WHITE);
     DrawText("q to quit r to restart)", camera.base.target.x - camera.base.offset.x, camera.base.target.y - camera.base.offset.y + 100, 50, WHITE);
     if(IsKeyDown(closeKey))
@@ -237,6 +257,7 @@ deadScreen:
       system("killall game && ./game");
     EndDrawing();
   }
+  CloseAudioDevice();
   CloseWindow();
 
   destructStars(starArr);

@@ -9,9 +9,8 @@ Vector2 toCartesian(Vector2 v) {
   return (Vector2){-v.y, v.x};
 }
 
-void drawCircle(circle* circle) {
-  Vector2 windowSize = {GetScreenWidth(), GetScreenHeight()};
-  DrawCircle(circle->position.y + (windowSize.x / 2.0f), -circle->position.x + (windowSize.y / 2.0f), circle->radius, circle->colour);
+void drawCircle(circle* circle, Vector2 screenDimensions) {
+  DrawCircle(circle->position.y + (screenDimensions.x / 2.0f), -circle->position.x + (screenDimensions.y / 2.0f), circle->radius, circle->colour);
 }
 
 //seed before.
@@ -25,9 +24,7 @@ Vector2 applyCam(Vector2 v, Camera2D cam) {
 
 //seed before.
 Vector2 getRandomVector2OnScreen(Camera2D cam) {
-  Vector2 random = {randSingle() - .5, randSingle() - .5};
-  Vector2 randomScaled = {random.x * GetScreenHeight(), random.y * GetScreenWidth() / cam.zoom};
-  return randomScaled;
+  return (Vector2){(randSingle() - .5) * GetScreenHeight() / cam.zoom, (randSingle() - .5) * GetScreenWidth() / cam.zoom};
 }
 
 Vector2 removeCam(Vector2 v, Camera2D cam) {

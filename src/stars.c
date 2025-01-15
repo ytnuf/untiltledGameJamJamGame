@@ -16,7 +16,7 @@ float absf(float x) {
 Vector2* initStars(int star) {
   Vector2* out = (Vector2*)malloc(sizeof(Vector2) * star);
   while(star-- > 0) {
-    out[star] = (Vector2){10000, 10000};
+    out[star] = (Vector2){10000};
   }
   return out;
 }
@@ -39,13 +39,17 @@ void refreshStars(Vector2* starArr, Camera2D Camera, bool force) {
       Vector2 rand = applyCam(Vector2Scale(getRandomVector2OnScreen(Camera), starSpawnDist), Camera);
       if(getPointIsOnScreenScaled(rand, Camera, 1) && !force)
         continue;
-      starArr[i] = rand;
+      starArr[i]= rand;
     }
     i++;
   }
 }
 
-void drawStars(Vector2* starArr) {
-  for(int i = 0; i < starCount; i++)
-    drawCircle(&(circle){starArr[i], starRadius, starColour});
+void drawStars(Vector2* starArr, Camera2D* cam) {
+  Vector2 screenDems = {GetScreenWidth(), GetScreenHeight()};
+  circle tmp = {{0}, 1, starColour};
+  for(int i = 0; i < starCount; i++) {
+    tmp.position = starArr[i];
+    drawCircle(&tmp, screenDems);
+  }
 }

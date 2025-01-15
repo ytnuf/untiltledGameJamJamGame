@@ -21,8 +21,8 @@ void setBasePosition(Base* base) {
   base->body.position = Vector2Add((Vector2){cosf(base->angle) * base->planet.radius, sinf(base->angle) * base->planet.radius}, base->planet.position);
 }
 
-void drawBase(Base* base) {
-  drawCircle(&base->body);
+void drawBase(Base* base, Vector2 screenDimensions) {
+  drawCircle(&base->body, screenDimensions);
 }
 
 void addScoreToBase(Base* base, float score) {
@@ -45,7 +45,7 @@ void manageBase(Base* base, Player* player, float delta) {
   base->score += scoreToAdd;
 }
 
-void drawBorder(Base* base) {
-  drawCircle(&(circle){base->body.position, base->intakeRadius, intakeBorderColour});
-  drawCircle(&(circle){base->body.position, base->intakeRadius - intakeBorderThickn, BLACK});
+void drawBorder(Base* base, Vector2 screenDimensions) {
+  drawCircle(&(circle){base->body.position, base->intakeRadius, intakeBorderColour}, screenDimensions);
+  drawCircle(&(circle){base->body.position, base->intakeRadius - intakeBorderThickn, BLACK}, screenDimensions);
 }

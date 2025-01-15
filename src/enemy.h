@@ -58,7 +58,7 @@ bool enemyTargetIsInPlanet(enemy* en);
 
 bool shouldSpawnMissile(enemy* en);
 
-void manageEnemy(enemy* en, Missile* out, float delta, bool canShoot);
+void manageEnemy(enemy* en, Missile* out, float delta, bool canShoot, Sound* missileFiredSound);
 
 bool enemyShouldDieToMissile(enemy* en, Missile* mis);
 

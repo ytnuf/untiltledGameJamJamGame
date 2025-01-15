@@ -30,10 +30,10 @@ Base initBase(circle planet);
 
 bool positionInRangeOfBase(Base* base, Vector2 position);
 
-void drawBase(Base* base);
+void drawBase(Base* base, Vector2 screenDimensions);
 
 void manageBase(Base* base, Player* player, float delta);
 
-void drawBorder(Base* base);
+void drawBorder(Base* base, Vector2 screenDimensions);
 
 #endif

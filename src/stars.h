@@ -4,7 +4,7 @@
 #include <raylib.h>
 #include "circle.h"
 
-#define starCount 1000
+#define starCount 150
 #define starColour WHITE
 #define starRadius 1
 
@@ -14,6 +14,6 @@ void destructStars(Vector2* starArr);
 
 void refreshStars(Vector2* starArr, Camera2D Camera, bool force);
 
-void drawStars(Vector2* starArr);
+void drawStars(Vector2* starArr, Camera2D* cam);
 
 #endif

@@ -10,7 +10,7 @@ struct circle {
 };
 typedef struct circle circle;
 
-void drawCircle(circle*);
+void drawCircle(circle*, Vector2 screenDimensions);
 
 circle randomCircleOnScreen(Camera2D cam, Color col, float maxSize, float minSize);
 
