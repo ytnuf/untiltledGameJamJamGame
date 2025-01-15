@@ -32,7 +32,10 @@
 #define enSize sizeof(enemy)
 #define orbSize sizeof(Orb)
 
-#define enemySpawnTime 1
+#define enemySpawnTimeStart 1
+#define enemySpawnTimeDecay .001
+#define enemyShotSpeedStart 1
+#define enemyShotSpeedDecay .0008
 
 #define gameplayCode 0
 #define deadScreenCode 1
@@ -93,10 +96,13 @@ void manageOrbs(Orb** orbArr, int* orbCount, Player* player, float delta, shakeC
       applyCameraShake(cam, 9, 10, (*orbArr)[i].angle);
       continue;
     }
-    /*if(positionInRangeOfBase(base, (*orbArr)[i].body.position)) {
+    if(positionInRangeOfBase(base, (*orbArr)[i].body.position) && !(*orbArr)[i].approaching) {
       (*orbArr)[i].target = &base->body;
+      (*orbArr)[i].distance = Vector2Distance((*orbArr)[i].body.position, base->body.position);
+      (*orbArr)[i].distanceVel = Vector2DotProduct(getVectorTo(base->body.position, (*orbArr)[i].body.position), (*orbArr)[i].Velocity) * Vector2Length((*orbArr)[i].Velocity);
+      (*orbArr)[i].distanceVel = (*orbArr)[i].distanceVel > maxOrbSpeed ? maxOrbSpeed : (*orbArr)[i].distanceVel;
       (*orbArr)[i].approaching = true;
-    }*/
+    }
     manageOrb(&(*orbArr)[i], delta);
     drawCircle(&(*orbArr)[i].body, globalScreenDimensions);
     i++;
@@ -169,6 +175,8 @@ int main() {
   short currentState = gameplayCode;
 
   float elapsedTime = 0;
+  float enemySpawnTime = enemySpawnTimeStart;
+  float enemyShotSpeed = .5;
 
   int orbCount = 0;
   Orb* orbArr = (Orb*)malloc(orbCount * orbSize);
@@ -220,8 +228,9 @@ int main() {
     drawCircle(&planet, globalScreenDimensions);
     drawBase(&base, globalScreenDimensions);
 
-    DrawText(TextFormat("score: %.0f", base.score), camera.base.target.x - camera.base.offset.x / camera.base.zoom, camera.base.target.y - camera.base.offset.y / camera.base.zoom, 50, WHITE);
-    DrawFPS(camera.base.target.x - camera.base.offset.x, camera.base.target.y - camera.base.offset.y);
+    DrawText(TextFormat("score: %.1f", base.score), camera.base.target.x - camera.base.offset.x / camera.base.zoom, camera.base.target.y - camera.base.offset.y / camera.base.zoom, 50, WHITE);
+    DrawText(TextFormat("stored score: %.1f", player.score), camera.base.target.x - camera.base.offset.x / camera.base.zoom, camera.base.target.y - camera.base.offset.y / camera.base.zoom + 50, 25, WHITE);
+    DrawFPS(camera.base.target.x - camera.base.offset.x / camera.base.zoom, camera.base.target.y - camera.base.offset.y / camera.base.zoom + 80);
 
     EndDrawing();
 
@@ -229,9 +238,13 @@ int main() {
       elapsedTime += delta;
     else {
       elapsedTime = 0;
+      enemySpawnTime += -enemySpawnTime * enemySpawnTimeDecay;
+      enemyShotSpeed += -enemyShotSpeed * enemyShotSpeedDecay;
+      printf("%f\n", enemyShotSpeed);
       //spawn enemy
       enemyArr = (enemy*)realloc(enemyArr, enSize * ++enemyCount);
       enemyArr[enemyCount - 1] = initEnemy(Vector2Zero(), &player, planet);
+      enemyArr[enemyCount - 1].shotSpeed = enemyShotSpeed;
       spawnEnemyAvoidArea(&enemyArr[enemyCount - 1]);
     }
 
