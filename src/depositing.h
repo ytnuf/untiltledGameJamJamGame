@@ -8,7 +8,7 @@
 #define baseIntakeRadius 1200
 #define baseRadius 50
 #define baseColour GREEN
-#define baseIntakeRate 1
+#define baseIntakeRate 3
 #define baseIntakeBorderColour WHITE
 #define baseRotationRate .06
 

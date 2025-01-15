@@ -4,10 +4,10 @@
 #include "circle.h"
 #include <raylib.h>
 
-#define up KEY_W
-#define left KEY_A
-#define right KEY_D
-#define down KEY_S
+#define upKey KEY_W
+#define leftKey KEY_A
+#define rightKey KEY_D
+#define downKey KEY_S
 
 #define playerR 20
 #define playerStartingPosition (Vector2){0, 0}
@@ -29,12 +29,12 @@ void playerApplyVelocity(Player* plr);
 
 Vector2 getInputVector(int l, int r, int u, int d);
 
-void applyInputToVelocity(Player* plr, float delta);
+void playerApplyInputToVelocity(Player* plr, float delta);
 
 void applyDamage(Player* plr, float damage);
 
-Vector2 getAvoidanceForce(Player* plr, circle Planet, float delta);
+Vector2 playerGetAvoidanceForce(Player* plr, circle Planet, float delta);
 
-void handleMovment(Player* plr, circle Planet, float delta, bool readInput);
+void handlePlayerMovment(Player* plr, circle Planet, float delta, bool readInput);
 
 #endif

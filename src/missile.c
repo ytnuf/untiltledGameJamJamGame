@@ -4,7 +4,6 @@
 #include "camera.h"
 #include <raymath.h>
 #include <raylib.h>
-#include <stdlib.h>
 
 #define stepCount 15
 
