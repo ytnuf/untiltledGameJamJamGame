@@ -1,2 +1,3 @@
 # ignore the game exe
 ./game
+gmon.out
