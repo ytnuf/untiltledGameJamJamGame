@@ -31,7 +31,7 @@ bool positionInRangeOfBase(Base* base, Vector2 point) {
   return Vector2DistanceSqr(base->body.position, point) < intakeRadSqr;
 }
 
-void manageBase(Base* base, Player* player, float delta) {
+void manageBase(Base* base, Player* player, Sound* collectionNoise, float delta) {
   base->angle += rotationRate * delta;
   setBasePosition(base);
   if(!positionInRangeOfBase(base, player->body.position))
@@ -41,6 +41,8 @@ void manageBase(Base* base, Player* player, float delta) {
     scoreToAdd = player->score;
   player->score -= scoreToAdd;
   base->score += scoreToAdd;
+  if(scoreToAdd >= .01 && !IsSoundPlaying(*collectionNoise))
+    PlaySound(*collectionNoise);
 }
 
 void drawBorder(Base* base, Vector2 screenDimensions) {

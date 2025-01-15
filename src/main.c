@@ -47,6 +47,7 @@
 #define playerDeadPath "resources/audio/playerDead.wav"
 #define collectionPath "resources/audio/collection.wav"
 #define enemyHitPath "resources/audio/enemyHit.wav"
+#define collectionGrowPath "resources/audio/gainScore.wav"
 
 void manageEnemies(enemy** enemyArr, int* enemyCount, Missile** missileArr, int* missileCount, Orb** orbArr, int* orbCount, Player* player, circle* planet, float delta, bool depositing, Sound* missileFiredSound, Sound* enemyHitSound, Vector2 globalScreenDimensions) {
   int i = 0;
@@ -155,6 +156,7 @@ int main() {
   Sound missileFiredSound = LoadSound(missileFiredPath);
   Sound collectionSound = LoadSound(collectionPath);
   Sound enemyHitSound = LoadSound(enemyHitPath);
+  Sound gainScoreSound = LoadSound(collectionGrowPath);
 
   SetTargetFPS(60);
   shakeCamera camera = {(Camera2D){Vector2Scale(screenDimensions, .5), Vector2Scale(screenDimensions, .5),0, .9}, 0, Vector2Zero(), Vector2Zero()};
@@ -176,7 +178,7 @@ int main() {
 
   float elapsedTime = 0;
   float enemySpawnTime = enemySpawnTimeStart;
-  float enemyShotSpeed = .5;
+  float enemyShotSpeed = enemyShotSpeedStart;
 
   int orbCount = 0;
   Orb* orbArr = (Orb*)malloc(orbCount * orbSize);
@@ -221,8 +223,7 @@ int main() {
     manageMissiles(&missileArr, &missileCount, &player, enemyArr, &enemyCount, &planet, delta, &camera, globalScreenDimensions, &missileBrokeSound, &playerHitSound);
     manageEnemies(&enemyArr, &enemyCount, &missileArr, &missileCount, &orbArr, &orbCount, &player, &planet, delta, positionInRangeOfBase(&base, player.body.position), &missileFiredSound, &enemyHitSound, globalScreenDimensions);
     manageOrbs(&orbArr, &orbCount, &player, delta, &camera, &base, globalScreenDimensions, &collectionSound);
-    manageBase(&base, &player, delta);
-
+    manageBase(&base, &player, &gainScoreSound, delta);
 
     drawCircle(&player.body, globalScreenDimensions);
     drawCircle(&planet, globalScreenDimensions);
@@ -283,6 +284,14 @@ deadScreen:
   }
   CloseAudioDevice();
   CloseWindow();
+
+  UnloadSound(playerDeadSound);
+  UnloadSound(playerHitSound);
+  UnloadSound(missileBrokeSound);
+  UnloadSound(missileFiredSound);
+  UnloadSound(collectionSound);
+  UnloadSound(enemyHitSound);
+  UnloadSound(gainScoreSound);
 
   destructStars(starArr);
 
