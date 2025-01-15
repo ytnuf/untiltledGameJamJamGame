@@ -51,15 +51,28 @@
 
 #define enemyDepositingViewDistance 1000
 
-void manageEnemies(enemy** enemyArr, int* enemyCount, Missile** missileArr, int* missileCount, Orb** orbArr, int* orbCount, Player* player, circle* planet, float delta, bool depositing, Sound* missileFiredSound, Sound* enemyHitSound, Vector2 globalScreenDimensions) {
+#define enemyDieJitterness 7
+#define enemyDieMagnitude  9
+
+#define missileBreakJitterness 4
+#define missileBreakMagnitude  9
+
+#define orbCollectJitterness  2.5f
+#define orbCollectMagnitude   5
+
+#define playerHitJitterness   20
+#define playerHitMagnitude    10
+
+void manageEnemies(enemy** enemyArr, Missile** missileArr, Orb** orbArr, int* enemyCount, int* missileCount, int* orbCount, Player* player, circle* planet, Sound* missileFiredSound, Sound* enemyHitSound, bool depositing, float delta) {
+  Vector2 globalScreenDimensions = (Vector2){GetScreenWidth(), GetScreenHeight()};
   int i = 0;
   while(*enemyCount != 0 && i < *enemyCount) {
     if(!(*enemyArr)[i].valid) {
       //pop time
       //adding o r b s
-      *orbCount += orbSpawnCount;
+      *orbCount += enemyOrbSpawnCount;
       *orbArr = realloc(*orbArr, orbSize * *orbCount);
-      spawnOrbs((*enemyArr)[i].body.position, &(*orbArr)[*orbCount - orbSpawnCount], orbSpawnCount, &player->body, planet, (*enemyArr)[i].viewDistance);
+      spawnOrbs((*enemyArr)[i].body.position, &(*orbArr)[*orbCount - enemyOrbSpawnCount], enemyOrbSpawnCount, &player->body, planet, (*enemyArr)[i].viewDistance);
       PlaySound(*enemyHitSound);
       (*enemyArr)[i] = (*enemyArr)[*enemyCount - 1];
       (*enemyArr) = (enemy*)realloc(*enemyArr, enSize * (*enemyCount)--);
@@ -85,7 +98,8 @@ void manageEnemies(enemy** enemyArr, int* enemyCount, Missile** missileArr, int*
   }
 }
 
-void manageOrbs(Orb** orbArr, int* orbCount, Player* player, float delta, shakeCamera* cam, Base* base, Vector2 globalScreenDimensions, Sound* collectionSound) {
+void manageOrbs(Orb** orbArr, int* orbCount, Player* player, Base* base, shakeCamera* cam, Sound* collectionSound, float delta) {
+  Vector2 globalScreenDimensions = (Vector2){GetScreenWidth(), GetScreenHeight()};
   int i = 0;
   while(*orbCount != 0 && i < *orbCount) {
     if(!(*orbArr)[i].valid) {
@@ -98,7 +112,7 @@ void manageOrbs(Orb** orbArr, int* orbCount, Player* player, float delta, shakeC
       PlaySound(*collectionSound);
       (*orbArr)[i] = (*orbArr)[*orbCount - 1];
       (*orbArr) = (Orb*)realloc((*orbArr), orbSize * (*orbCount)--);
-      applyCameraShake(cam, 3, 6, (*orbArr)[i].angle);
+      applyCameraShake(cam, orbCollectMagnitude, orbCollectJitterness, (*orbArr)[i].angle);
       continue;
     }
     if(positionInRangeOfBase(base, (*orbArr)[i].body.position) && !(*orbArr)[i].approaching) {
@@ -106,6 +120,7 @@ void manageOrbs(Orb** orbArr, int* orbCount, Player* player, float delta, shakeC
       (*orbArr)[i].distance = Vector2Distance((*orbArr)[i].body.position, base->body.position);
       (*orbArr)[i].distanceVel = Vector2DotProduct(getVectorTo(base->body.position, (*orbArr)[i].body.position), (*orbArr)[i].Velocity) * Vector2Length((*orbArr)[i].Velocity);
       (*orbArr)[i].distanceVel = (*orbArr)[i].distanceVel > maxOrbSpeed ? maxOrbSpeed : (*orbArr)[i].distanceVel;
+      (*orbArr)[i].distanceVel = (*orbArr)[i].distanceVel < -maxOrbSpeed ? -maxOrbSpeed : (*orbArr)[i].distanceVel;
       (*orbArr)[i].approaching = true;
     }
     manageOrb(&(*orbArr)[i], delta);
@@ -114,7 +129,8 @@ void manageOrbs(Orb** orbArr, int* orbCount, Player* player, float delta, shakeC
   }
 }
 
-void manageMissiles(Missile** missileArr, int* missileCount, Player* player, enemy* enemyArr, int* enemyCount, circle* planet, float delta, shakeCamera* cam, Vector2 globalScreenDimensions, Sound* missileBrokeSound, Sound* playerHitSound) {
+void manageMissiles(Missile** missileArr, enemy* enemyArr, int* missileCount, int* enemyCount, Player* player, circle* planet, shakeCamera* cam, Sound* missileBrokeSound, Sound* playerHitSound, float delta) {
+  Vector2 globalScreenDimensions = (Vector2){GetScreenWidth(), GetScreenHeight()};
   int i = 0;
   while(*missileCount != 0 && i < *missileCount) {
     Vector2 vecTo = (*missileArr)[i].velocity;
@@ -124,12 +140,12 @@ void manageMissiles(Missile** missileArr, int* missileCount, Player* player, ene
         PlaySound(*missileBrokeSound);
       (*missileArr)[i] = (*missileArr)[*missileCount - 1];
       *missileArr = (Missile*)realloc(*missileArr, misSize * (*missileCount)--);
-      applyCameraShake(cam, 1, 1, atan2f(vecTo.x, vecTo.y));
+      applyCameraShake(cam, missileBreakMagnitude, missileBreakJitterness, atan2f(vecTo.x, vecTo.y));
       continue;
     }
     if(manageMissileMovement(&(*missileArr)[i], delta, player, cam)) {
       PlaySound(*playerHitSound);
-      applyCameraShake(cam, 4, 9, atan2f(vecTo.x, vecTo.y));
+      applyCameraShake(cam, playerHitMagnitude, playerHitJitterness, atan2f(vecTo.x, vecTo.y));
     }
     drawCircle(&(*missileArr)[i].body, globalScreenDimensions);
     if(Vector2Distance((*missileArr)[i].body.position, planet->position) <= (*missileArr)[i].body.radius + planet->radius) {
@@ -141,7 +157,7 @@ void manageMissiles(Missile** missileArr, int* missileCount, Player* player, ene
         enemyArr[b].valid = false;
         (*missileArr)[i].valid = false;
         enemyArr[b].viewDistance = atan2f(vecTo.x, vecTo.y);
-        applyCameraShake(cam, 2, 5, atan2f(vecTo.x, vecTo.y));
+        applyCameraShake(cam, enemyDieMagnitude, enemyDieJitterness, atan2f(vecTo.x, vecTo.y));
         continue;
       }
     }
@@ -202,7 +218,7 @@ int main() {
     if(currentState == deadScreenCode)
       goto deadScreen;
 
-    handleMovment(&player, planet, delta, true);
+    handlePlayerMovment(&player, planet, delta, true);
     playerApplyVelocity(&player);
     player.velocity = Vector2Scale(player.velocity, friction);
 
@@ -224,9 +240,9 @@ int main() {
 
     drawBorder(&base, globalScreenDimensions);
     drawStars(starArr, &camera.base);
-    manageMissiles(&missileArr, &missileCount, &player, enemyArr, &enemyCount, &planet, delta, &camera, globalScreenDimensions, &missileBrokeSound, &playerHitSound);
-    manageEnemies(&enemyArr, &enemyCount, &missileArr, &missileCount, &orbArr, &orbCount, &player, &planet, delta, positionInRangeOfBase(&base, player.body.position), &missileFiredSound, &enemyHitSound, globalScreenDimensions);
-    manageOrbs(&orbArr, &orbCount, &player, delta, &camera, &base, globalScreenDimensions, &collectionSound);
+    manageMissiles(&missileArr, enemyArr, &missileCount, &enemyCount, &player, &planet, &camera, &missileBrokeSound, &playerHitSound, delta);
+    manageEnemies(&enemyArr, &missileArr, &orbArr, &enemyCount, &missileCount, &orbCount, &player, &planet, &missileFiredSound, &enemyHitSound, positionInRangeOfBase(&base, player.body.position), delta);
+    manageOrbs(&orbArr, &orbCount, &player, &base, &camera, &collectionSound, delta);
     manageBase(&base, &player, &gainScoreSound, delta);
 
     drawCircle(&player.body, globalScreenDimensions);
@@ -249,7 +265,7 @@ int main() {
       enemyArr = (enemy*)realloc(enemyArr, enSize * ++enemyCount);
       enemyArr[enemyCount - 1] = initEnemy(Vector2Zero(), &player, planet);
       enemyArr[enemyCount - 1].shotSpeed = enemyShotSpeed;
-      spawnEnemyAvoidArea(&enemyArr[enemyCount - 1]);
+      spawnEnemyOnAvoidArea(&enemyArr[enemyCount - 1]);
     }
 
     if(IsKeyDown(closeKey))
@@ -270,12 +286,12 @@ deadScreen:
     ClearBackground(backroundColour);
     drawBorder(&base, globalScreenDimensions);
     drawStars(starArr, &camera.base);
-    manageMissiles(&missileArr, &missileCount, &player, enemyArr, &enemyCount, &planet, delta, &camera, globalScreenDimensions, &missileBrokeSound, &playerHitSound);
-    manageEnemies(&enemyArr, &enemyCount, &missileArr, &missileCount, &orbArr, &orbCount, &player, &planet, delta, positionInRangeOfBase(&base, player.body.position), &missileFiredSound, &enemyHitSound, globalScreenDimensions);
-    manageOrbs(&orbArr, &orbCount, &player, delta, &camera, &base, globalScreenDimensions, &collectionSound);
+    manageMissiles(&missileArr, enemyArr, &missileCount, &enemyCount, &player, &planet, &camera, &missileBrokeSound, &playerHitSound, delta);
+    manageEnemies(&enemyArr, &missileArr, &orbArr, &enemyCount, &missileCount, &orbCount, &player, &planet, &missileFiredSound, &enemyHitSound, positionInRangeOfBase(&base, player.body.position), delta);
+    manageOrbs(&orbArr, &orbCount, &player, &base, &camera, &collectionSound, delta);
     if(player.health > 0)
       currentState = gameplayCode;
-    handleMovment(&player, planet, delta, false);
+    handlePlayerMovment(&player, planet, delta, false);
     drawCircle(&planet, globalScreenDimensions);
     drawCircle(&player.body, globalScreenDimensions);
     manageBase(&base, &player, &gainScoreSound, delta);

@@ -8,10 +8,9 @@
 #define baseIntakeRadius 1200
 #define baseRadius 50
 #define baseColour GREEN
-#define intakeRate 1
-#define intakeBorderColour WHITE
-#define intakeBorderThickn 10
-#define rotationRate .06
+#define baseIntakeRate 3
+#define baseIntakeBorderColour WHITE
+#define baseRotationRate .06
 
 struct base {
   float score;

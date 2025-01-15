@@ -35,7 +35,7 @@ enemy initEnemy(Vector2 position, Player* player, circle avoidZone) {
   return ret;
 }
 
-bool tooCloseToPlayer(enemy en) {
+bool enemyTooCloseToPlayer(enemy en) {
   return enemyMinimumDistance > Vector2Distance(en.body.position, en.player->body.position);
 }
 
@@ -63,7 +63,7 @@ bool enemyTargetInPlanet(enemy* en) {
   return Vector2DistanceSqr(en->avoidZone.position, enemyGetTargetPosition(en)) < en->avoidZone.radius * en->avoidZone.radius;
 }
 
-void navigate(enemy* en, float delta) {
+void enemyNavigate(enemy* en, float delta) {
   //this is gonna be a complicated function; good thing i have blahaj here to help :)
   //great we're not too close
   //right now lets just have it maintain its previous distance
@@ -85,7 +85,7 @@ void navigate(enemy* en, float delta) {
   enemyApplyVelocity(en);
 }
 
-bool shouldSpawnMissile(enemy* en) {
+bool enemyShouldSpawnMissile(enemy* en) {
   return en->elapsedShotTime >= en->shotSpeed && Vector2Distance(en->body.position, en->player->body.position) < enemyFiringRange;
 }
 
@@ -98,21 +98,21 @@ Missile fireMissile(enemy* en) {
 
 void manageEnemy(enemy* en, Missile* out, float delta, bool canShoot, Sound* missileFiredSound) {
   en->elapsedShotTime += delta;
-  if(shouldSpawnMissile(en) && canShoot) {
+  if(enemyShouldSpawnMissile(en) && canShoot) {
     en->elapsedShotTime = 0;
     *out = fireMissile(en);
     out->valid = true;
     //PlaySound(*missileFiredSound);
   } else
     out->valid = false;
-  navigate(en, delta);
+  enemyNavigate(en, delta);
 }
 
 bool enemyShouldDieToMissile(enemy* en, Missile* mis) {
-  return Vector2Distance(en->body.position, mis->body.position) <= enemyHitboxRadius + mis->body.radius && mis->lifetime >= missileHitboxLifetimeMin;
+  return Vector2Distance(en->body.position, mis->body.position) <= enemyHitboxRadius + mis->body.radius && mis->lifetime >= enemyMissileDetectionMinimumLifetime;
 }
 
-void spawnEnemyAvoidArea(enemy* in) {
+void spawnEnemyOnAvoidArea(enemy* in) {
   //pick random angle
   float angle = ((float)rand() / (float)RAND_MAX) * 2 * M_PI;
   //get the offset

@@ -22,8 +22,8 @@
 #define enemyKnockBack 50
 #define enemyFiringRange 650
 #define enemyHitboxRadius 70
-#define missileHitboxLifetimeMin .1
-#define orbSpawnCount 3
+#define enemyMissileDetectionMinimumLifetime .1 //this is a long name basically it just is the minimum time a missile has to exist for it to hit an enemy
+#define enemyOrbSpawnCount 3
 
 #define enemyFric .8
 
@@ -48,20 +48,20 @@ typedef struct enemy enemy;
 
 enemy initEnemy(Vector2 position, Player* player, circle planet);
 
-bool tooCloseToPlayer(enemy en);
+bool enemyRooCloseToPlayer(enemy en);
 
 bool enemyCanSeePlayer(enemy en);
 
-void navigate(enemy* en, float delta);
+void enemyNavigate(enemy* en, float delta);
 
 bool enemyTargetIsInPlanet(enemy* en);
 
-bool shouldSpawnMissile(enemy* en);
+bool enemyShouldSpawnMissile(enemy* en);
 
 void manageEnemy(enemy* en, Missile* out, float delta, bool canShoot, Sound* missileFiredSound);
 
 bool enemyShouldDieToMissile(enemy* en, Missile* mis);
 
-void spawnEnemyAvoidArea(enemy* in);
+void spawnEnemyOnAvoidArea(enemy* in);
 
 #endif

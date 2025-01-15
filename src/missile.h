@@ -27,8 +27,6 @@ struct missile {
 };
 typedef struct missile Missile;
 
-circle* getClosestTarget(circle* target, circle* arr, int arSize);
-
 Missile initMissile(Vector2 position, Vector2 velocity, float damage, circle* target);
 
 //returns a normalized vector

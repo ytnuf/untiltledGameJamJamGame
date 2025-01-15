@@ -18,7 +18,7 @@ void cameraShakeF(shakeCamera* camera) {
   camera->shakeDirection = Vector2Add(camera->shakeDirection, randV);
   end = Vector2Add(end, camera->shakeDirection);
   camera->jitterness += -camera->jitterness * shakeDampening;
-  camera->shakeDirection = Vector2Subtract(Vector2Scale(camera->shakeDirection, shakeDampening), camera->shakeDirection);
+  camera->shakeDirection = Vector2Subtract(camera->shakeDirection, Vector2Scale(camera->shakeDirection, shakeDampening));
 }
 
 void applyCameraShake(shakeCamera* camera, float magnitude, float jitterness, float angle) {

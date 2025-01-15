@@ -18,8 +18,8 @@ Vector2 getInputVector(int l, int r, int u, int d) {
   return Vector2Normalize(out);
 }
 
-void applyInputToVelocity(Player* plr, float delta) {
-  Vector2 input = Vector2Scale(getInputVector(up, down, left, right), playerSpeed * delta);
+void playerApplyInputToVelocity(Player* plr, float delta) {
+  Vector2 input = Vector2Scale(getInputVector(upKey, downKey, leftKey, rightKey), playerSpeed * delta);
   plr->velocity = Vector2Add(plr->velocity, input);
 }
 
@@ -31,7 +31,7 @@ void applyDamage(Player* plr, float damage) {
     plr->health = 0;
 }
 
-Vector2 getAvoidanceForce(Player* plr, circle planet, float delta) {
+Vector2 playerGetAvoidanceForce(Player* plr, circle planet, float delta) {
   float distFromEdgeWrong = Vector2Distance(plr->body.position, planet.position) - planet.radius;
   float distanceFromEdge = distFromEdgeWrong < 0 ? -distFromEdgeWrong : distFromEdgeWrong;
   if(distanceFromEdge >= prefferedDistFromPlanet)
@@ -40,12 +40,12 @@ Vector2 getAvoidanceForce(Player* plr, circle planet, float delta) {
   return Vector2Scale(difNormalized, distanceFromEdge * delta * avoidanceScalar);
 }
 
-void applyAvoidanceForce(Player* plr, circle planet, float delta) {
-  plr->velocity = Vector2Add(getAvoidanceForce(plr, planet, delta), plr->velocity);
+void playerApplyAvoidanceForce(Player* plr, circle planet, float delta) {
+  plr->velocity = Vector2Add(playerGetAvoidanceForce(plr, planet, delta), plr->velocity);
 }
 
-void handleMovment(Player* plr, circle planet, float delta, bool readInput) {
+void handlePlayerMovment(Player* plr, circle planet, float delta, bool readInput) {
   if(readInput)
-    applyInputToVelocity(plr, delta);
-  applyAvoidanceForce(plr, planet, delta);
+    playerApplyInputToVelocity(plr, delta);
+  playerApplyAvoidanceForce(plr, planet, delta);
 }
