@@ -103,9 +103,10 @@ void manageOrbs(Orb** orbArr, int* orbCount, Player* player, Base* base, shakeCa
   while(*orbCount != 0 && i < *orbCount) {
     if(!(*orbArr)[i].valid) {
       //poopy time
-      applyDamage(player, -healthRegenPerOrb);
-      if((*orbArr)[i].target != &base->body)
+      if((*orbArr)[i].target != &base->body) {
         player->score += scorePerOrb;
+        applyDamage(player, -healthRegenPerOrb); //make sure we don't heal the player when they don't pick it up
+      }
       else
         base->score += scorePerOrb;
       PlaySound(*collectionSound);
@@ -266,6 +267,7 @@ int main() {
       enemyArr[enemyCount - 1].shotSpeed = enemyShotSpeed;
       spawnEnemyOnAvoidArea(&enemyArr[enemyCount - 1]);
     }
+  SetMousePosition(0, 0);
 
     if(IsKeyDown(closeKey))
       break;
@@ -305,6 +307,7 @@ deadScreen:
   }
   CloseAudioDevice();
   CloseWindow();
+
 
   UnloadSound(playerDeadSound);
   UnloadSound(playerHitSound);
