@@ -1,7 +1,7 @@
 #include "camera.h"
 #include "circle.h"
-#include <raymath.h>
-#include <raylib.h>
+#include "../libraries/raymath.h"
+#include "../libraries/raylib.h"
 
 float randSingleFull() {
   return (randSingle() - .5f) * 2.0f;

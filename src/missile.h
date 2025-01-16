@@ -1,8 +1,8 @@
 #ifndef missile_h
 #define missile_h
 
-#include <raylib.h>
-#include <raymath.h>
+#include "../libraries/raylib.h"
+#include "../libraries/raymath.h"
 #include "circle.h"
 #include "camera.h"
 #include "player.h"

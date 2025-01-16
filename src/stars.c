@@ -1,7 +1,7 @@
 #include "stars.h"
 #include "circle.h"
-#include <raylib.h>
-#include <raymath.h>
+#include "../libraries/raymath.h"
+#include "../libraries/raylib.h"
 #include <stdlib.h>
 
 #define starDist 1.01

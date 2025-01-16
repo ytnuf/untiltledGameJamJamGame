@@ -11,8 +11,8 @@
 
 #include "circle.h"
 #include "player.h"
-#include <raylib.h>
-#include <raymath.h>
+#include "../libraries/raymath.h"
+#include "../libraries/raylib.h"
 
 #define orbColour GREEN
 #define orbRadius 5

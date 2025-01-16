@@ -2,9 +2,9 @@
 #include "missile.h"
 #include "circle.h"
 #include <math.h>
-#include <raylib.h>
-#include <raymath.h>
 #include <stdlib.h>
+#include "../libraries/raylib.h"
+#include "../libraries/raymath.h"
 
 bool orbInRange(Orb* ob) {
   return Vector2Distance(ob->target->position, ob->body.position) <= orbIntakeRange;

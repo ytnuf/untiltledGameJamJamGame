@@ -1,9 +1,9 @@
 CC = gcc
-CFLAGS = -lm -lraylib
+LDFLAGS = -Llibraries -lraylib -lm -ldl -lpthread -lGL -lrt -lX11
 SRC = src/*.c
 OUTPUT = game
 program:
-	$(CC) $(CFLAGS) $(SRC) -o $(OUTPUT)
+	$(CC) $(SRC) -o $(OUTPUT) $(LDFLAGS)
 
 clean:
 	rm -f $(OUTPUT)

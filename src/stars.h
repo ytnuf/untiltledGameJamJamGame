@@ -1,7 +1,7 @@
 #ifndef stars_h
 #define stars_h
 
-#include <raylib.h>
+#include "../libraries/raylib.h"
 #include "circle.h"
 
 #define starCount 150

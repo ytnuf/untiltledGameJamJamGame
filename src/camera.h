@@ -1,8 +1,8 @@
 #ifndef camera_h
 #define camera_h
 
-#include <raylib.h>
-#include <raymath.h>
+#include "../libraries/raylib.h"
+#include "../libraries/raymath.h"
 
 #define shakeDampening .1
 
