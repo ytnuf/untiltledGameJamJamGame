@@ -1,8 +1,7 @@
 #ifndef enemy_h
 #define enemy_h
 
-#include "../libraries/raylib.h"
-#include "../libraries/raymath.h"
+#include "include.h"
 #include "circle.h"
 #include "player.h"
 #include "missile.h"

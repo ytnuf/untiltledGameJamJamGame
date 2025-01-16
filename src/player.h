@@ -2,7 +2,7 @@
 #define player_h
 
 #include "circle.h"
-#include "../libraries/raylib.h"
+#include "include.h"
 
 #define upKey KEY_W
 #define leftKey KEY_A

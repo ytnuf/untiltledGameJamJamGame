@@ -1,7 +1,6 @@
 #include "circle.h"
 #include <stdlib.h>
-#include "../libraries/raylib.h"
-#include "../libraries/raymath.h"
+#include "include.h"
 
 #define scalar (Vector2){1, -1}
 

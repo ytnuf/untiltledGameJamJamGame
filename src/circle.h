@@ -1,7 +1,7 @@
 #ifndef circle_h
 #define circle_h
 
-#include "../libraries/raylib.h"
+#include "include.h"
 
 struct circle {
   Vector2 position;

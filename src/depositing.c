@@ -2,8 +2,7 @@
 #include "circle.h"
 #include "player.h"
 #include <math.h>
-#include "../libraries/raylib.h"
-#include "../libraries/raymath.h"
+#include "include.h"
 
 const float intakeRadSqr = baseIntakeRadius * baseIntakeRadius;
 

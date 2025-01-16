@@ -1,7 +1,6 @@
 #include "stdlib.h"
 #include <math.h>
-#include "../libraries/raylib.h"
-#include "../libraries/raymath.h"
+#include "include.h"
 
 #include "enemy.h"
 #include "missile.h"

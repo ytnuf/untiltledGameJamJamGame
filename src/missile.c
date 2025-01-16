@@ -2,8 +2,7 @@
 #include "circle.h"
 #include "player.h"
 #include "camera.h"
-#include "../libraries/raylib.h"
-#include "../libraries/raymath.h"
+#include "include.h"
 
 #define stepCount 15
 

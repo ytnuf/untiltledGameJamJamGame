@@ -1,7 +1,7 @@
 #ifndef depositing_h
 #define depositing_h
 
-#include "../libraries/raylib.h"
+#include "include.h"
 #include "circle.h"
 #include "player.h"
 

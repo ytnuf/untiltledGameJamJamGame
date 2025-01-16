@@ -1,5 +1,4 @@
-#include "../libraries/raylib.h"
-#include "../libraries/raymath.h"
+#include "include.h"
 #include <stdbool.h>
 #include <stdlib.h>
 #include <time.h>

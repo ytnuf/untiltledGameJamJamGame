@@ -3,8 +3,7 @@
 #include "circle.h"
 #include <math.h>
 #include <stdlib.h>
-#include "../libraries/raylib.h"
-#include "../libraries/raymath.h"
+#include "include.h"
 
 bool orbInRange(Orb* ob) {
   return Vector2Distance(ob->target->position, ob->body.position) <= orbIntakeRange;

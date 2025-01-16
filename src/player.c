@@ -1,6 +1,5 @@
 #include "player.h"
-#include "../libraries/raylib.h"
-#include "../libraries/raymath.h"
+#include "include.h"
 
 #define prefferedDistFromPlanet 100
 #define avoidanceScalar 6
