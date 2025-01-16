@@ -1,4 +1,9 @@
+CC = gcc
+CFLAGS = -lm -lraylib
+SRC = src/*.c
+OUTPUT = game
 program:
-	gcc src/*.c -lraylib -lm -o game -g -pg
-profile:
-	gprof game > prof
+	$(CC) $(CFLAGS) $(SRC) -o $(OUTPUT)
+
+clean:
+	rm -f $(OUTPUT)
