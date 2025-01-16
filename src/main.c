@@ -2,6 +2,7 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <time.h>
+#include <string.h>
 #include "camera.h"
 #include "stdio.h"
 #include "circle.h"
@@ -11,6 +12,7 @@
 #include "stars.h"
 #include "orb.h"
 #include "depositing.h"
+#include "button.h"
 
 #define screenDimensions (Vector2){1000 * 16/9, 1000 / (16 / 9)}
 
@@ -61,6 +63,8 @@
 
 #define playerHitJitterness   20
 #define playerHitMagnitude    10
+
+#define mainMenuTextFormat "UntitledGameJamJamGame"
 
 void manageEnemies(enemy** enemyArr, Missile** missileArr, Orb** orbArr, int* enemyCount, int* missileCount, int* orbCount, Player* player, circle* planet, Sound* missileFiredSound, Sound* enemyHitSound, bool depositing, float delta) {
   Vector2 globalScreenDimensions = (Vector2){GetScreenWidth(), GetScreenHeight()};
@@ -194,7 +198,7 @@ int main() {
   int enemyCount = 0;
   enemy* enemyArr = (enemy*)malloc(enemyCount * enSize);
 
-  short currentState = gameplayCode;
+  short currentState = startScreenCode;
 
   float elapsedTime = 0;
   float enemySpawnTime = enemySpawnTimeStart;
@@ -207,8 +211,10 @@ int main() {
 
   Vector2 globalScreenDimensions;
 
+  unsigned long frameCount = 0;
 
   while(!WindowShouldClose()) {
+    frameCount++;
     globalScreenDimensions = (Vector2){GetScreenWidth(), GetScreenHeight()};
     cameraShakeF(&camera);
     refreshCamera(&camera);
@@ -217,6 +223,8 @@ int main() {
     float delta = GetFrameTime();
     if(currentState == deadScreenCode)
       goto deadScreen;
+    else if(currentState == startScreenCode)
+      goto mainMenu;
 
     handlePlayerMovment(&player, planet, delta, true);
     playerApplyVelocity(&player);
@@ -267,7 +275,6 @@ int main() {
       enemyArr[enemyCount - 1].shotSpeed = enemyShotSpeed;
       spawnEnemyOnAvoidArea(&enemyArr[enemyCount - 1]);
     }
-  SetMousePosition(0, 0);
 
     if(IsKeyDown(closeKey))
       break;
@@ -298,16 +305,29 @@ deadScreen:
     manageBase(&base, &player, &gainScoreSound, delta);
     manageBase(&base, &player, &gainScoreSound, delta);
     DrawText(TextFormat("You are dead your score is %.0f", base.score), camera.base.target.x - camera.base.offset.x, camera.base.target.y - camera.base.offset.y, 100, WHITE);
-    DrawText("q to quit r to restart)", camera.base.target.x - camera.base.offset.x, camera.base.target.y - camera.base.offset.y + 100, 50, WHITE);
+    DrawText("(q to quit r to restart)", camera.base.target.x - camera.base.offset.x, camera.base.target.y - camera.base.offset.y + 100, 50, WHITE);
     if(IsKeyDown(closeKey))
       break;
     if(IsKeyDown(KEY_R))
       system("killall game && ./game");
     EndDrawing();
+
+    continue;
+
+  mainMenu:
+    Button start = {{GetScreenWidth() / 2.0 - GetScreenWidth() / 10.0f, GetScreenHeight() / 2.0f, GetScreenWidth() / 5.0f, 100}, "Start", 50, GRAY, WHITE};
+    //this is where we do main menue stuff
+    BeginDrawing();
+    ClearBackground(backroundColour);
+    DrawText(mainMenuTextFormat, 0, 0, 100, WHITE);
+    drawStars(starArr, &camera.base);
+    drawButton(&start);
+    if(buttonIsPressed(&start))
+      currentState = gameplayCode;
+    EndDrawing();
   }
   CloseAudioDevice();
   CloseWindow();
-
 
   UnloadSound(playerDeadSound);
   UnloadSound(playerHitSound);
