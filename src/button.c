@@ -12,5 +12,6 @@ bool buttonIsPressed(Button* button) {
 
 void drawButton(Button* button) {
   DrawRectangleRec(button->rect, button->rectCol);
-  DrawText(button->text, button->rect.x, button->rect.y + button->rect.height / 2.0f - button->textSize / 2.0f, button->textSize, button->textCol);
+  Vector2 dems = MeasureTextEx(GetFontDefault(), button->text, button->textSize, GetFontDefault().baseSize);
+  DrawText(button->text, (button->rect.width - dems.x) / 2.0f + button->rect.x, button->rect.y + dems.y/2.0f, button->textSize, button->textCol);
 }
