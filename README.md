@@ -9,23 +9,17 @@ wasd to move
 redirect missiles at enemies to get orbs
 orbs heal and give you points you can deposit at the base
 when you deposit at the base your score increases but
-enemies also get faster and all start chasing you
+enemies also get faster and see you from much farther
 
 # build process
 
 have:
 gcc
 make
-raylib
 
 and run
 ```bash
 make
-./game
-```
-to run the game
-or just run the excecutable if you're on linux
-```
 ./game
 ```
 untitledGameJamJamGame © 2025 by maningreen is licensed under CC BY-NC-SA 4.0 

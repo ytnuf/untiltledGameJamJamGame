@@ -65,6 +65,14 @@
 #define playerHitMagnitude    10
 
 #define mainMenuTextFormat "UntitledGameJamJamGame"
+#define mainMenuTextSize 100
+#define startButtonTextFormat "Start"
+#define startButtonTextSize 50
+
+#define deadMenuTextFormat "You are dead. Your score is %.1f"
+#define deadMenutTextSize 100
+#define restartButtonTextFormat "Play again."
+#define restartButtonTextSize 50
 
 void manageEnemies(enemy** enemyArr, Missile** missileArr, Orb** orbArr, int* enemyCount, int* missileCount, int* orbCount, Player* player, circle* planet, Sound* missileFiredSound, Sound* enemyHitSound, bool depositing, float delta) {
   Vector2 globalScreenDimensions = (Vector2){GetScreenWidth(), GetScreenHeight()};
@@ -211,8 +219,10 @@ int main() {
 
   Vector2 globalScreenDimensions;
 
+  player.body.position = (Vector2){-GetScreenHeight() / 2.0f - player.body.radius, 0};
   unsigned long frameCount = 0;
 
+    camera.base.offset = (Vector2){GetScreenWidth() * .5, GetScreenHeight() * .5};
   while(!WindowShouldClose()) {
     frameCount++;
     globalScreenDimensions = (Vector2){GetScreenWidth(), GetScreenHeight()};
@@ -233,7 +243,6 @@ int main() {
     //camera stuff
     Vector2 plrGlobalPos = {player.body.position.y + GetScreenWidth()/2.0f, -player.body.position.x + GetScreenHeight()/2.0f};
     camera.target = Vector2Lerp(camera.target, plrGlobalPos, cameraLatency);
-    camera.base.offset = (Vector2){GetScreenWidth() * .5, GetScreenHeight() * .5};
 
     refreshStars(starArr, camera.base, false);
 
@@ -288,43 +297,69 @@ deadScreen:
     player.velocity = Vector2Scale(player.velocity, friction);
     plrGlobalPos = (Vector2){player.body.position.y + GetScreenWidth()/2.0f, -player.body.position.x + GetScreenHeight()/2.0f};
     camera.target = Vector2Lerp(camera.target, plrGlobalPos, cameraLatency);
-    camera.base.offset = (Vector2){GetScreenWidth() * .5, GetScreenHeight() * .5};
+
     BeginDrawing();
-    BeginMode2D(camera.base);
+
     ClearBackground(backroundColour);
-    drawBorder(&base, globalScreenDimensions);
+
+    BeginMode2D(camera.base);
+
+
     drawStars(starArr, &camera.base);
+    drawBorder(&base, globalScreenDimensions);
+
     manageMissiles(&missileArr, enemyArr, &missileCount, &enemyCount, &player, &planet, &camera, &missileBrokeSound, &playerHitSound, delta);
     manageEnemies(&enemyArr, &missileArr, &orbArr, &enemyCount, &missileCount, &orbCount, &player, &planet, &missileFiredSound, &enemyHitSound, positionInRangeOfBase(&base, player.body.position), delta);
     manageOrbs(&orbArr, &orbCount, &player, &base, &camera, &collectionSound, delta);
+
     if(player.health > 0)
       currentState = gameplayCode;
+
     handlePlayerMovment(&player, planet, delta, false);
+
     drawCircle(&planet, globalScreenDimensions);
     drawCircle(&player.body, globalScreenDimensions);
+
+    drawBase(&base, globalScreenDimensions);
     manageBase(&base, &player, &gainScoreSound, delta);
-    manageBase(&base, &player, &gainScoreSound, delta);
-    DrawText(TextFormat("You are dead your score is %.0f", base.score), camera.base.target.x - camera.base.offset.x, camera.base.target.y - camera.base.offset.y, 100, WHITE);
-    DrawText("(q to quit r to restart)", camera.base.target.x - camera.base.offset.x, camera.base.target.y - camera.base.offset.y + 100, 50, WHITE);
-    if(IsKeyDown(closeKey))
-      break;
-    if(IsKeyDown(KEY_R))
-      system("killall game && ./game");
+
+    Vector2 UIbase = (Vector2){camera.base.target.x - camera.base.offset.x / camera.base.zoom, camera.base.target.y - camera.base.offset.y / camera.base.zoom};
+    DrawText(TextFormat(deadMenuTextFormat, base.score), UIbase.x + (GetScreenWidth() - MeasureTextEx(GetFontDefault(), TextFormat(deadMenuTextFormat, base.score), deadMenutTextSize, GetFontDefault().baseSize).x) / 2.0f, UIbase.y, deadMenutTextSize, WHITE);
+    Button restart = {(Rectangle){UIbase.x + GetScreenWidth() / 2.0 - GetScreenWidth() / 10.0f, UIbase.y + GetScreenHeight() / 2.0f, GetScreenWidth() / 5.0f, startButtonTextSize * 2.0f}, restartButtonTextFormat, restartButtonTextSize, BLACK, WHITE, WHITE, 10};
+    drawButton(&restart);
+
     EndDrawing();
 
     continue;
 
   mainMenu:
-    Button start = {{GetScreenWidth() / 2.0 - GetScreenWidth() / 10.0f, GetScreenHeight() / 2.0f, GetScreenWidth() / 5.0f, 100}, "Start", 50, GRAY, WHITE};
+    Button start = {{GetScreenWidth() / 2.0 - GetScreenWidth() / 10.0f, GetScreenHeight() / 2.0f, GetScreenWidth() / 5.0f, startButtonTextSize * 2.0f}, startButtonTextFormat, startButtonTextSize, BLACK, WHITE, WHITE, 10};
     //this is where we do main menue stuff
     BeginDrawing();
     ClearBackground(backroundColour);
-    DrawText(mainMenuTextFormat, 0, 0, 100, WHITE);
     drawStars(starArr, &camera.base);
+    drawCircle(&planet, globalScreenDimensions);
+    drawBase(&base, globalScreenDimensions);
+    drawBorder(&base, globalScreenDimensions);
+    manageBase(&base, &player, &collectionSound, delta);
+
+    player.velocity = Vector2Scale(player.velocity, friction);
+    playerApplyVelocity(&player);
+    drawCircle(&player.body, globalScreenDimensions);
+    DrawText(mainMenuTextFormat, (GetScreenWidth() - MeasureTextEx(GetFontDefault(), mainMenuTextFormat, 100, GetFontDefault().baseSize).x) / 2.0f, 0, 100, WHITE);
     drawButton(&start);
-    if(buttonIsPressed(&start))
+    if(buttonIsPressed(&start, camera.base)) {
+      player.velocity = (Vector2){GetScreenHeight() / 10.0f, 0};
+      player.body.position = camera.base.target;
+      player.body.position.x = camera.base.target.x - GetScreenHeight();
+    }
+    if(player.body.position.x > 0) {
       currentState = gameplayCode;
+      camera.base.offset = Vector2Scale(globalScreenDimensions, .5);
+      camera.target = Vector2Add((Vector2){player.body.position.y, player.body.position.x}, camera.base.offset);
+    }
     EndDrawing();
+    continue;
   }
   CloseAudioDevice();
   CloseWindow();

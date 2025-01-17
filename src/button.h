@@ -9,10 +9,12 @@ struct button {
   int textSize;
   Color rectCol;
   Color textCol;
+  Color outlineCol;
+  short outlineThickness;
 };
 typedef struct button Button;
 
-bool buttonIsPressed(Button* button);
+bool buttonIsPressed(Button* button, Camera2D cam);
 
 void drawButton(Button* button);
 
