@@ -23,7 +23,7 @@ void cameraShakeF(shakeCamera* camera) {
 void applyCameraShake(shakeCamera* camera, float magnitude, float jitterness, float angle) {
   float prevMag = Vector2Length(camera->shakeDirection);
   float nextMag = magnitude + prevMag;
-  Vector2 nextDirection = Vector2Normalize(Vector2Add( Vector2Scale((Vector2){cosf(angle), sinf(angle)}, magnitude), camera->shakeDirection));
+  Vector2 nextDirection = Vector2Normalize(Vector2Add( Vector2Scale((Vector2){-sinf(angle), cosf(angle)}, magnitude), camera->shakeDirection));
   camera->shakeDirection = Vector2Scale(nextDirection, nextMag);
   camera->jitterness += jitterness;
 }
