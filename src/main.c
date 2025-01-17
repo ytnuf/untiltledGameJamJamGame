@@ -312,8 +312,10 @@ deadScreen:
     manageEnemies(&enemyArr, &missileArr, &orbArr, &enemyCount, &missileCount, &orbCount, &player, &planet, &missileFiredSound, &enemyHitSound, positionInRangeOfBase(&base, player.body.position), delta);
     manageOrbs(&orbArr, &orbCount, &player, &base, &camera, &collectionSound, delta);
 
-    if(player.health > 0)
+    if(player.health > 0) {
+      PlaySound(playerDeadSound);
       currentState = gameplayCode;
+    }
 
     handlePlayerMovment(&player, planet, delta, false);
 
