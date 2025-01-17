@@ -330,8 +330,18 @@ deadScreen:
     Button restart = {(Rectangle){UIbase.x + GetScreenWidth() / 2.0 - GetScreenWidth() / 20.0f, UIbase.y + GetScreenHeight(), GetScreenWidth() / 5.0f, startButtonTextSize * 2.0f}, restartButtonTextFormat, restartButtonTextSize, BLACK, WHITE, WHITE, 10};
     drawButton(&restart);
 
-    if(buttonIsPressed(restart, camera.base))
-      break;
+    if(buttonIsPressed(restart, camera.base)) {
+      currentState = gameplayCode;
+      refreshStars(starArr, camera.base, true);
+      missileCount = 0;
+      orbCount = 0;
+      enemyCount = 0;
+      base.score = 0;
+      player = (Player){(circle){playerStartingPosition, playerR, playerColour}, Vector2Zero(), playerMaxHealth, playerMaxHealth};
+      enemyArr = realloc(enemyArr, enSize * enemyCount);
+      orbArr = realloc(orbArr, orbSize * orbCount);
+      missileArr = realloc(missileArr, misSize * missileCount);
+    }
 
     EndDrawing();
 
@@ -341,7 +351,7 @@ deadScreen:
     if(player.velocity.x == 0)
       player.body.position = (Vector2){-GetScreenHeight() / 2.0f - player.body.radius, 0};
     Button start = {{GetScreenWidth() / 2.0 - GetScreenWidth() / 10.0f, GetScreenHeight() / 2.0f, GetScreenWidth() / 5.0f, startButtonTextSize * 2.0f}, startButtonTextFormat, startButtonTextSize, BLACK, WHITE, WHITE, 10};
-    //this is where we do main menue stuff
+    //this is where we do main menu stuff
     BeginDrawing();
     ClearBackground(backroundColour);
     drawStars(starArr, &camera.base);
