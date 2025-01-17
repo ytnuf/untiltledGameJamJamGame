@@ -219,10 +219,11 @@ int main() {
 
   Vector2 globalScreenDimensions;
 
-  player.body.position = (Vector2){-GetScreenHeight() / 2.0f - player.body.radius, 0};
   unsigned long frameCount = 0;
 
-    camera.base.offset = (Vector2){GetScreenWidth() * .5, GetScreenHeight() * .5};
+  camera.base.offset = (Vector2){GetScreenWidth() * .5, GetScreenHeight() * .5};
+
+  short pc = 0;
   while(!WindowShouldClose()) {
     frameCount++;
     globalScreenDimensions = (Vector2){GetScreenWidth(), GetScreenHeight()};
@@ -338,6 +339,8 @@ deadScreen:
     continue;
 
   mainMenu:
+    if(player.velocity.x == 0)
+      player.body.position = (Vector2){-GetScreenHeight() / 2.0f - player.body.radius, 0};
     Button start = {{GetScreenWidth() / 2.0 - GetScreenWidth() / 10.0f, GetScreenHeight() / 2.0f, GetScreenWidth() / 5.0f, startButtonTextSize * 2.0f}, startButtonTextFormat, startButtonTextSize, BLACK, WHITE, WHITE, 10};
     //this is where we do main menue stuff
     BeginDrawing();
@@ -354,9 +357,12 @@ deadScreen:
     DrawText(mainMenuTextFormat, (GetScreenWidth() - MeasureTextEx(GetFontDefault(), mainMenuTextFormat, 100, GetFontDefault().baseSize).x) / 2.0f, 0, 100, WHITE);
     drawButton(&start);
     if(buttonIsPressed(&start)) {
+      pc++;
       player.velocity = (Vector2){GetScreenHeight() / 10.0f, 0};
       player.body.position = camera.base.target;
       player.body.position.x = camera.base.target.x - GetScreenHeight();
+      if(pc > 10)
+        goto tmp;
     }
     if(player.body.position.x > 0) {
       currentState = gameplayCode;
@@ -380,4 +386,8 @@ deadScreen:
   destructStars(starArr);
 
   return 0;
+tmp:
+  system("clear");
+  printf("fuck you, you don't get to play\n");
+  return -1;
 }
