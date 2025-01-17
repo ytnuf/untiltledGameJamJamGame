@@ -14,6 +14,7 @@
 #include "orb.h"
 #include "depositing.h"
 #include "button.h"
+#include "powerup.h"
 
 #define screenDimensions (Vector2){1000 * 16/9, 1000 / (16 / 9)}
 
@@ -142,8 +143,10 @@ void manageOrbs(Orb** orbArr, int* orbCount, Player* player, Base* base, shakeCa
   }
 }
 
-void manageMissiles(Missile** missileArr, enemy* enemyArr, int* missileCount, int* enemyCount, Player* player, circle* planet, shakeCamera* cam, Sound* missileBrokeSound, Sound* playerHitSound, float delta) {
+//returns if we're in a power up state
+bool manageMissiles(Missile** missileArr, enemy* enemyArr, int* missileCount, int* enemyCount, Player* player, circle* planet, shakeCamera* cam, Sound* missileBrokeSound, Sound* playerHitSound, float delta) {
   Vector2 globalScreenDimensions = (Vector2){GetScreenWidth(), GetScreenHeight()};
+  bool power = false;
   int i = 0;
   while(*missileCount != 0 && i < *missileCount) {
     Vector2 vecTo = (*missileArr)[i].velocity;
@@ -171,11 +174,13 @@ void manageMissiles(Missile** missileArr, enemy* enemyArr, int* missileCount, in
         (*missileArr)[i].valid = false;
         enemyArr[b].viewDistance = atan2f(vecTo.x, vecTo.y);
         applyCameraShake(cam, enemyDieMagnitude, enemyDieJitterness, atan2f(vecTo.x, vecTo.y));
+        power = 1;
         continue;
       }
     }
     i++;
   }
+  return 1;
 }
 
 int main() {
@@ -224,6 +229,7 @@ int main() {
 
   camera.base.offset = (Vector2){GetScreenWidth() * .5, GetScreenHeight() * .5};
 
+  bool inPowerUp = false;
   while(!WindowShouldClose()) {
     frameCount++;
     globalScreenDimensions = (Vector2){GetScreenWidth(), GetScreenHeight()};
@@ -231,11 +237,13 @@ int main() {
     refreshCamera(&camera);
     //this is just for health stuff
     player.body.colour = ColorLerp(playerColour, playerDeadColour, 1 - player.health/player.maxHealth);
-    float delta = GetFrameTime();
+    float delta = !inPowerUp ? GetFrameTime() : 0;
     if(currentState == deadScreenCode)
       goto deadScreen;
     else if(currentState == startScreenCode)
       goto mainMenu;
+
+    //MAIN GAME LOOP
 
     handlePlayerMovment(&player, planet, delta, true);
     playerApplyVelocity(&player);
@@ -260,7 +268,8 @@ int main() {
 
     drawBorder(&base, globalScreenDimensions);
     drawStars(starArr, &camera.base);
-    manageMissiles(&missileArr, enemyArr, &missileCount, &enemyCount, &player, &planet, &camera, &missileBrokeSound, &playerHitSound, delta);
+    inPowerUp = manageMissiles(&missileArr, enemyArr, &missileCount, &enemyCount, &player, &planet, &camera, &missileBrokeSound, &playerHitSound, delta);
+    printf("%d\n", inPowerUp);
     manageEnemies(&enemyArr, &missileArr, &orbArr, &enemyCount, &missileCount, &orbCount, &player, &planet, &missileFiredSound, &enemyHitSound, positionInRangeOfBase(&base, player.body.position), delta);
     manageOrbs(&orbArr, &orbCount, &player, &base, &camera, &collectionSound, delta);
     manageBase(&base, &player, &gainScoreSound, delta);
