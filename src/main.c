@@ -328,6 +328,9 @@ deadScreen:
     Button restart = {(Rectangle){UIbase.x + GetScreenWidth() / 2.0 - GetScreenWidth() / 20.0f, UIbase.y + GetScreenHeight(), GetScreenWidth() / 5.0f, startButtonTextSize * 2.0f}, restartButtonTextFormat, restartButtonTextSize, BLACK, WHITE, WHITE, 10};
     drawButton(&restart);
 
+    if(buttonIsPressed(&restart))
+      break;
+
     EndDrawing();
 
     continue;
@@ -348,7 +351,7 @@ deadScreen:
     drawCircle(&player.body, globalScreenDimensions);
     DrawText(mainMenuTextFormat, (GetScreenWidth() - MeasureTextEx(GetFontDefault(), mainMenuTextFormat, 100, GetFontDefault().baseSize).x) / 2.0f, 0, 100, WHITE);
     drawButton(&start);
-    if(buttonIsPressed(&start, camera.base)) {
+    if(buttonIsPressed(&start)) {
       player.velocity = (Vector2){GetScreenHeight() / 10.0f, 0};
       player.body.position = camera.base.target;
       player.body.position.x = camera.base.target.x - GetScreenHeight();

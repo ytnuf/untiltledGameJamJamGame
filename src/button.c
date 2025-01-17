@@ -5,9 +5,9 @@ bool positionInRect(Rectangle rect, Vector2 position) {
   return rect.x < position.x && rect.x + rect.width > position.x && rect.y < position.y && rect.y + rect.height > position.y;
 }
 
-bool buttonIsPressed(Button* button, Camera2D cam) {
+bool buttonIsPressed(Button* button) {
   Vector2 mousePos = GetMousePosition();
-  return positionInRect(button->rect, mousePos) && IsMouseButtonReleased(MOUSE_BUTTON_LEFT);
+  return positionInRect((Rectangle){button->rect.x, button->rect.y, button->rect.width, button->rect.height}, mousePos) && IsMouseButtonReleased(MOUSE_BUTTON_LEFT);
 }
 
 void drawButton(Button* button) {
