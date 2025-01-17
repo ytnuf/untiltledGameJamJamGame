@@ -33,6 +33,19 @@
                 "VCPKG_CHAINLOAD_TOOLCHAIN_FILE": "$env{EMSDK}/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake",
                 "VCPKG_TARGET_TRIPLET": "wasm32-emscripten"
             }
+        },
+        {
+            "name": "release-mingw64-windows-make",
+            "generator": "Unix Makefiles",
+            "binaryDir": "${sourceDir}/build/${presetName}/",
+            "toolchainFile": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
+            "cacheVariables": {
+                "VCPKG_CHAINLOAD_TOOLCHAIN_FILE": {
+                    "type": "FILEPATH",
+                    "value": "${sourceDir}/cmake/mingw64-toolchain.cmake"
+                },
+                "VCPKG_TARGET_TRIPLET": "x64-mingw-static"
+            }
         }
     ],
     "buildPresets": [
@@ -47,6 +60,10 @@
         {
             "name": "release-emscripten-web-make",
             "configurePreset": "release-emscripten-web-make"
+        },
+        {
+            "name": "release-mingw64-windows-make",
+            "configurePreset": "release-mingw64-windows-make"
         }
     ]
 }

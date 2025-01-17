@@ -22,5 +22,14 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
     )
 else()
     find_package("raylib" CONFIG REQUIRED)
-    target_link_libraries("${PROJECT_NAME}" PRIVATE "raylib")
+    target_link_libraries("${PROJECT_NAME}"
+        PRIVATE "raylib"
+    )
+    if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+        find_package("glfw3" CONFIG REQUIRED)
+        target_link_libraries("${PROJECT_NAME}"
+            PRIVATE "glfw"
+            PRIVATE "winmm.lib"
+        )
+    endif()
 endif()
