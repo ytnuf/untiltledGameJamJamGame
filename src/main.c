@@ -152,12 +152,12 @@ void manageMissiles(Missile** missileArr, enemy* enemyArr, int* missileCount, in
         PlaySound(*missileBrokeSound);
       (*missileArr)[i] = (*missileArr)[*missileCount - 1];
       *missileArr = (Missile*)realloc(*missileArr, misSize * (*missileCount)--);
-      applyCameraShake(cam, missileBreakMagnitude, missileBreakJitterness, atan2f(vecTo.x, vecTo.y));
+      applyCameraShake(cam, missileBreakMagnitude, missileBreakJitterness, -atan2f(vecTo.y, vecTo.x));
       continue;
     }
     if(manageMissileMovement(&(*missileArr)[i], delta, player, cam)) {
       PlaySound(*playerHitSound);
-      applyCameraShake(cam, playerHitMagnitude, playerHitJitterness, atan2f(vecTo.x, vecTo.y));
+      applyCameraShake(cam, playerHitMagnitude, playerHitJitterness, -atan2f(vecTo.y, vecTo.x));
     }
     drawCircle(&(*missileArr)[i].body, globalScreenDimensions);
     if(Vector2Distance((*missileArr)[i].body.position, planet->position) <= (*missileArr)[i].body.radius + planet->radius) {
@@ -168,8 +168,8 @@ void manageMissiles(Missile** missileArr, enemy* enemyArr, int* missileCount, in
       if(enemyShouldDieToMissile(&enemyArr[b], &(*missileArr)[i])) {
         enemyArr[b].valid = false;
         (*missileArr)[i].valid = false;
-        enemyArr[b].viewDistance = atan2f(vecTo.x, vecTo.y);
-        applyCameraShake(cam, enemyDieMagnitude, enemyDieJitterness, atan2f(vecTo.x, vecTo.y));
+        enemyArr[b].viewDistance = -atan2f(vecTo.y, vecTo.x);
+        applyCameraShake(cam, enemyDieMagnitude, enemyDieJitterness, -atan2f(vecTo.y, vecTo.x));
         continue;
       }
     }
