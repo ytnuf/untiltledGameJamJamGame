@@ -325,7 +325,7 @@ deadScreen:
 
     Vector2 UIbase = (Vector2){camera.base.target.x - camera.base.offset.x / camera.base.zoom, camera.base.target.y - camera.base.offset.y / camera.base.zoom};
     DrawText(TextFormat(deadMenuTextFormat, base.score), UIbase.x + (GetScreenWidth() - MeasureTextEx(GetFontDefault(), TextFormat(deadMenuTextFormat, base.score), deadMenutTextSize, GetFontDefault().baseSize).x) / 2.0f, UIbase.y, deadMenutTextSize, WHITE);
-    Button restart = {(Rectangle){UIbase.x + GetScreenWidth() / 2.0 - GetScreenWidth() / 10.0f, UIbase.y + GetScreenHeight() / 2.0f, GetScreenWidth() / 5.0f, startButtonTextSize * 2.0f}, restartButtonTextFormat, restartButtonTextSize, BLACK, WHITE, WHITE, 10};
+    Button restart = {(Rectangle){UIbase.x + GetScreenWidth() / 2.0 - GetScreenWidth() / 20.0f, UIbase.y + GetScreenHeight(), GetScreenWidth() / 5.0f, startButtonTextSize * 2.0f}, restartButtonTextFormat, restartButtonTextSize, BLACK, WHITE, WHITE, 10};
     drawButton(&restart);
 
     EndDrawing();
