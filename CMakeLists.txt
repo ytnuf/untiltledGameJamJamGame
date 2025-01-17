@@ -9,8 +9,8 @@ file(GLOB MY_SRC CONFIGURE_DEPENDS "src/*.c")
 target_sources("untitled_game_jam_jam_game" PRIVATE ${MY_SRC})
 
 
+add_subdirectory("libraries")
 target_link_libraries("untitled_game_jam_jam_game"
-    PRIVATE "${PROJECT_SOURCE_DIR}/libraries/libraylib.a"
+    PRIVATE "raylib::linux"
     PRIVATE "m"
 )
-target_include_directories("untitled_game_jam_jam_game" PRIVATE "libraries")
