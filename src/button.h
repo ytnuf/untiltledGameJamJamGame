@@ -14,7 +14,7 @@ struct button {
 };
 typedef struct button Button;
 
-bool buttonIsPressed(Button* button);
+bool buttonIsPressed(Button button, Camera2D camera);
 
 void drawButton(Button* button);
 

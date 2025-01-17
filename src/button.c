@@ -1,13 +1,17 @@
-#include "button.h"
 #include "include.h"
+#include "button.h"
+#include <stdio.h>
 
 bool positionInRect(Rectangle rect, Vector2 position) {
-  return rect.x < position.x && rect.x + rect.width > position.x && rect.y < position.y && rect.y + rect.height > position.y;
+  return position.x - rect.x <= rect.width && position.x - rect.x >= 0 && position.y - rect.y <= rect.height && position.y - rect.y >= 0;
 }
 
-bool buttonIsPressed(Button* button) {
-  Vector2 mousePos = GetMousePosition();
-  return positionInRect((Rectangle){button->rect.x, button->rect.y, button->rect.width, button->rect.height}, mousePos) && IsMouseButtonReleased(MOUSE_BUTTON_LEFT);
+bool buttonIsPressed(Button button, Camera2D camera) {
+  Vector2 mousePos = Vector2Scale(GetMousePosition(), 1/camera.zoom);
+  Vector2 UIbase = (Vector2){camera.target.x - camera.offset.x / camera.zoom, camera.target.y - camera.offset.y / camera.zoom};
+  button.rect.x -= UIbase.x;
+  button.rect.y -= UIbase.y;
+  return positionInRect(button.rect, mousePos) && IsMouseButtonPressed(MOUSE_BUTTON_LEFT);
 }
 
 void drawButton(Button* button) {

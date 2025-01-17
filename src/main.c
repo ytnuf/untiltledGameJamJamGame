@@ -307,7 +307,6 @@ deadScreen:
 
     BeginMode2D(camera.base);
 
-
     drawStars(starArr, &camera.base);
     drawBorder(&base, globalScreenDimensions);
 
@@ -331,7 +330,7 @@ deadScreen:
     Button restart = {(Rectangle){UIbase.x + GetScreenWidth() / 2.0 - GetScreenWidth() / 20.0f, UIbase.y + GetScreenHeight(), GetScreenWidth() / 5.0f, startButtonTextSize * 2.0f}, restartButtonTextFormat, restartButtonTextSize, BLACK, WHITE, WHITE, 10};
     drawButton(&restart);
 
-    if(buttonIsPressed(&restart))
+    if(buttonIsPressed(restart, camera.base))
       break;
 
     EndDrawing();
@@ -356,7 +355,7 @@ deadScreen:
     drawCircle(&player.body, globalScreenDimensions);
     DrawText(mainMenuTextFormat, (GetScreenWidth() - MeasureTextEx(GetFontDefault(), mainMenuTextFormat, 100, GetFontDefault().baseSize).x) / 2.0f, 0, 100, WHITE);
     drawButton(&start);
-    if(buttonIsPressed(&start)) {
+    if(buttonIsPressed(start, (Camera2D){0, 0, 0, 0, 0, 1})) {
       pc++;
       player.velocity = (Vector2){GetScreenHeight() / 10.0f, 0};
       player.body.position = camera.base.target;
@@ -370,6 +369,9 @@ deadScreen:
       camera.target = Vector2Add((Vector2){player.body.position.y, player.body.position.x}, camera.base.offset);
     }
     EndDrawing();
+    continue;
+
+  restart:
     continue;
   }
   CloseAudioDevice();
