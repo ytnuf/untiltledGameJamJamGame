@@ -9,8 +9,14 @@ file(GLOB MY_SRC CONFIGURE_DEPENDS "src/*.c")
 target_sources("untitled_game_jam_jam_game" PRIVATE ${MY_SRC})
 
 
-add_subdirectory("libraries")
-target_link_libraries("untitled_game_jam_jam_game"
-    PRIVATE "raylib::linux"
-    PRIVATE "m"
-)
+if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+    message(FATAL_ERROR "HERE")
+    add_subdirectory("libraries")
+    target_link_libraries("untitled_game_jam_jam_game"
+        PRIVATE "raylib::linux"
+        PRIVATE "m"
+    )
+else()
+    find_package("raylib" CONFIG REQUIRED)
+    target_link_libraries("untitled_game_jam_jam_game" PRIVATE "raylib")
+endif()
