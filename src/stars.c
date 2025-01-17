@@ -34,8 +34,10 @@ void refreshStars(Vector2* starArr, Camera2D Camera, bool force) {
   while(i < starCount) {
     if(!getPointIsOnScreenScaled(starArr[i], screenDems, Camera, starReloadDist) || force) {
       Vector2 rand = applyCam(Vector2Scale(getRandomVector2OnScreen(Camera), starSpawnDist), Camera);
-      if(getPointIsOnScreenScaled(rand, screenDems, Camera, 1) && nforce)
+      if(getPointIsOnScreenScaled(rand, screenDems, Camera, 1) && nforce) {
+        i++;
         continue;
+      }
       starArr[i]= rand;
     }
     i++;
