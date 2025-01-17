@@ -55,7 +55,7 @@ void spawnOrbs(Vector2 origin, Orb orbArr[], int spawnCount, circle* target, cir
     float randVal = randSingle();
     float angle = (((randVal * randVal * randVal * randVal) - .5f) * 2.0f * M_PI) + bias;
     float speed = (((float)rand() / (float)RAND_MAX) * (maxOrbSpeed - minOrbSpeed)) + minOrbSpeed;
-    Vector2 velocity = {sinf(angle) * speed, cosf(angle) * speed};
+    Vector2 velocity = {-sinf(angle) * speed, cosf(angle) * speed};
     orbArr[i] = (Orb){(circle){origin, orbRadius, orbColour}, velocity, 0, 0, 0, target, false, true, 0, avoidArea};
   }
 }
