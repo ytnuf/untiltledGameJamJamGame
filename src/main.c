@@ -35,9 +35,9 @@
 #define orbSize sizeof(Orb)
 
 #define enemySpawnTimeStart 1
-#define enemySpawnTimeDecay .001
+#define enemySpawnTimeDecay .002
 #define enemyShotSpeedStart 1
-#define enemyShotSpeedDecay .0008
+#define enemyShotSpeedDecay .0009
 
 #define gameplayCode 0
 #define deadScreenCode 1
@@ -224,7 +224,6 @@ int main() {
 
   camera.base.offset = (Vector2){GetScreenWidth() * .5, GetScreenHeight() * .5};
 
-  short pc = 0;
   while(!WindowShouldClose()) {
     frameCount++;
     globalScreenDimensions = (Vector2){GetScreenWidth(), GetScreenHeight()};
@@ -367,12 +366,9 @@ deadScreen:
     DrawText(mainMenuTextFormat, (GetScreenWidth() - MeasureTextEx(GetFontDefault(), mainMenuTextFormat, 100, GetFontDefault().baseSize).x) / 2.0f, 0, 100, WHITE);
     drawButton(&start);
     if(buttonIsPressed(start, (Camera2D){0, 0, 0, 0, 0, 1})) {
-      pc++;
       player.velocity = (Vector2){GetScreenHeight() / 10.0f, 0};
       player.body.position = camera.base.target;
       player.body.position.x = camera.base.target.x - GetScreenHeight();
-      if(pc > 10)
-        goto tmp;
     }
     if(player.body.position.x > 0) {
       currentState = gameplayCode;
@@ -399,9 +395,4 @@ deadScreen:
   destructStars(starArr);
 
   return 0;
-tmp:
-  system("clear");
-  system("rm game");
-  printf("fuck you, you don't get to play\n");
-  return -1;
 }
