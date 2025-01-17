@@ -246,8 +246,10 @@ int main() {
 
     refreshStars(starArr, camera.base, false);
 
-    if(player.health <= 0)
+    if(player.health <= 0) {
+      PlaySound(playerDeadSound);
       currentState = deadScreenCode;
+    }
 
     //draw
     BeginDrawing();
@@ -312,10 +314,8 @@ deadScreen:
     manageEnemies(&enemyArr, &missileArr, &orbArr, &enemyCount, &missileCount, &orbCount, &player, &planet, &missileFiredSound, &enemyHitSound, positionInRangeOfBase(&base, player.body.position), delta);
     manageOrbs(&orbArr, &orbCount, &player, &base, &camera, &collectionSound, delta);
 
-    if(player.health > 0) {
-      PlaySound(playerDeadSound);
+    if(player.health > 0)
       currentState = gameplayCode;
-    }
 
     handlePlayerMovment(&player, planet, delta, false);
 
