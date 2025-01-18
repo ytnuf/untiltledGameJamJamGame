@@ -13,7 +13,7 @@
 
 #define powerUpTimeFreezeZoom 1
 
-bool shouldDropPowerup(unsigned int enCount);
+bool shouldDropPowerup();
 
 void applyPowerup(Missile* misArr, unsigned int misCount, circle* target);
 

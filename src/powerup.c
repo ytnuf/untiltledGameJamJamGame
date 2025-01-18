@@ -5,8 +5,8 @@
 #include "include.h"
 #include <stdlib.h> //for big number
 
-bool shouldDropPowerup(unsigned int enCount) {
-  return randSingle() <= powerUpChance && enCount > 0;
+bool shouldDropPowerup() {
+  return randSingle() <= powerUpChance;
 }
 
 void applyPowerup(Missile* misArr, unsigned int misCount, circle* target) {
