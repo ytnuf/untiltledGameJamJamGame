@@ -239,7 +239,7 @@ int main() {
     //this is just for health stuff
     player.body.colour = ColorLerp(playerColour, playerDeadColour, 1 - player.health/player.maxHealth);
     float actualDelta = GetFrameTime();
-    float delta = !inPowerUp ? actualDelta : actualDelta / 5;
+    float delta = !inPowerUp ? actualDelta : actualDelta / powerSlowValue;
     if(currentState == deadScreenCode)
       goto deadScreen;
     else if(currentState == startScreenCode)
@@ -271,9 +271,11 @@ int main() {
     drawBorder(&base, globalScreenDimensions);
     drawStars(starArr, &camera.base);
     manageMissiles(&missileArr, enemyArr, &missileCount, &enemyCount, &player, &planet, &camera, &missileBrokeSound, &playerHitSound, delta);
-    printf("%d\n", inPowerUp);
     manageEnemies(&enemyArr, &missileArr, &orbArr, &enemyCount, &missileCount, &orbCount, &player, &planet, &missileFiredSound, &enemyHitSound, positionInRangeOfBase(&base, player.body.position), delta);
-    inPowerUp = manageOrbs(&orbArr, &orbCount, &player, &base, &camera, &collectionSound, delta) || inPowerUp;
+    bool applyPower = manageOrbs(&orbArr, &orbCount, &player, &base, &camera, &collectionSound, delta);
+    inPowerUp = applyPower || inPowerUp;
+    if(applyPower)
+      elapsedTimePowerup = 0;
     manageBase(&base, &player, &gainScoreSound, delta);
 
     drawCircle(&player.body, globalScreenDimensions);
@@ -292,10 +294,9 @@ int main() {
     }
     if(inPowerUp)
       elapsedTimePowerup += actualDelta;
-    printf("%f\n", elapsedTimePowerup);
 
     if(elapsedTimeEn < enemySpawnTime)
-      elapsedTimeEn += actualDelta;
+      elapsedTimeEn += actualDelta; //ensure that the time isn't slowed down
     else {
       elapsedTimeEn = 0;
       enemySpawnTime += -enemySpawnTime * enemySpawnTimeDecay;
@@ -330,7 +331,7 @@ deadScreen:
     drawBorder(&base, globalScreenDimensions);
 
     manageMissiles(&missileArr, enemyArr, &missileCount, &enemyCount, &player, &planet, &camera, &missileBrokeSound, &playerHitSound, delta);
-    manageEnemies(&enemyArr, &missileArr, &orbArr, &enemyCount, &missileCount, &orbCount, &player, &planet, &missileFiredSound, &enemyHitSound, positionInRangeOfBase(&base, player.body.position), delta);
+    manageEnemies(&enemyArr, &missileArr, &orbArr, &enemyCount, &missileCount, &orbCount, &player, &planet, &missileFiredSound, &enemyHitSound, positionInRangeOfBase(&base, player.body.position), actualDelta);
     manageOrbs(&orbArr, &orbCount, &player, &base, &camera, &collectionSound, delta);
 
     if(player.health > 0)

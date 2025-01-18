@@ -7,6 +7,7 @@
 #include "enemy.h"
 
 #define powerUpChance /*(0 - 1]*/ .5
+#define powerSlowValue 3
 #define powerUpSelectionGive 100
 #define powerUpTimeTimeFreeze 10
 
