@@ -17,8 +17,6 @@ enemy initEnemy(Vector2 position, Player* player, circle avoidZone) {
   enemy ret;
   ret.player = player;      //this is a ton less efficient than just doing (enemy){...} (at least on the assembly level)
   ret.avoidZone = avoidZone;//but it's so much more readable thus worth
-  ret.maxHealth = enemyMaxHp;
-  ret.health = enemyMaxHp;
   ret.body = enemyDefCircle;
   ret.body.position = position;
   ret.shotSpeed = enemyDefShotSpeed;
@@ -101,7 +99,7 @@ void manageEnemy(enemy* en, Missile* out, float delta, bool canShoot, Sound* mis
     en->elapsedShotTime = 0;
     *out = fireMissile(en);
     out->valid = true;
-    //PlaySound(*missileFiredSound);
+    PlaySound(*missileFiredSound);
   } else
     out->valid = false;
   enemyNavigate(en, delta);
