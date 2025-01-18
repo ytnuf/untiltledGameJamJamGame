@@ -131,7 +131,7 @@ short manageOrbs(Orb** orbArr, int* orbCount, Player* player, Base* base, shakeC
       (*orbArr)[i] = (*orbArr)[*orbCount - 1];
       (*orbArr) = (Orb*)realloc((*orbArr), orbSize * (*orbCount)--);
       applyCameraShake(cam, orbCollectMagnitude, orbCollectJitterness, (*orbArr)[i].angle);
-      power = 1;
+      power = shouldDropPowerup();
       continue;
     }
     if(positionInRangeOfBase(base, (*orbArr)[i].body.position) && !(*orbArr)[i].approaching) {
@@ -235,7 +235,6 @@ int main() {
   float elapsedTimePowerup = 0;
 
   unsigned short slowTimeCount = 0;
-  bool inDeadeye = false;
 
   double prevTime = GetTime();
   while(!WindowShouldClose()) {
@@ -246,7 +245,7 @@ int main() {
     //this is just for health stuff
     player.body.colour = ColorLerp(playerColour, playerDeadColour, 1 - player.health/player.maxHealth);
     double curTime = GetTime();
-    float actualDelta = !inDeadeye ? curTime - prevTime : 0;
+    float actualDelta = curTime - prevTime;
     float delta = slowTimeCount == 0 ? actualDelta : actualDelta / (powerUpSlowTimeValue * slowTimeCount);
     prevTime = curTime;
     if(currentState == deadScreenCode)
@@ -292,9 +291,9 @@ int main() {
     drawCircle(&planet, globalScreenDimensions);
     drawBase(&base, globalScreenDimensions);
 
-    DrawText(TextFormat("score: %.1f", base.score), camera.base.target.x - camera.base.offset.x / camera.base.zoom, camera.base.target.y - camera.base.offset.y / camera.base.zoom, 50, WHITE);
-    DrawText(TextFormat("stored score: %.1f", player.score), camera.base.target.x - camera.base.offset.x / camera.base.zoom, camera.base.target.y - camera.base.offset.y / camera.base.zoom + 50, 25, WHITE);
-    DrawFPS(camera.base.target.x - camera.base.offset.x / camera.base.zoom, camera.base.target.y - camera.base.offset.y / camera.base.zoom + 80);
+    DrawText(TextFormat("score: %.1f", base.score), camera.base.target.x - camera.base.offset.x / camera.base.zoom, camera.base.target.y - camera.base.offset.y / camera.base.zoom, 50 / camera.base.zoom, WHITE);
+    DrawText(TextFormat("stored score: %.1f", player.score), camera.base.target.x - camera.base.offset.x / camera.base.zoom, camera.base.target.y - camera.base.offset.y / camera.base.zoom + 50 / camera.base.zoom, 25 / camera.base.zoom, WHITE);
+    DrawFPS(camera.base.target.x - camera.base.offset.x / camera.base.zoom, camera.base.target.y - camera.base.offset.y / camera.base.zoom + 80 / camera.base.zoom);
 
     EndDrawing();
 
