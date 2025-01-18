@@ -129,7 +129,7 @@ bool manageOrbs(Orb** orbArr, int* orbCount, Player* player, Base* base, shakeCa
       (*orbArr)[i] = (*orbArr)[*orbCount - 1];
       (*orbArr) = (Orb*)realloc((*orbArr), orbSize * (*orbCount)--);
       applyCameraShake(cam, orbCollectMagnitude, orbCollectJitterness, (*orbArr)[i].angle);
-      power = true;
+      power = shouldDropPowerup(1);
       continue;
     }
     if(positionInRangeOfBase(base, (*orbArr)[i].body.position) && !(*orbArr)[i].approaching) {
@@ -239,7 +239,7 @@ int main() {
     //this is just for health stuff
     player.body.colour = ColorLerp(playerColour, playerDeadColour, 1 - player.health/player.maxHealth);
     float actualDelta = GetFrameTime();
-    float delta = !inPowerUp ? actualDelta : 0;
+    float delta = !inPowerUp ? actualDelta : actualDelta / 5;
     if(currentState == deadScreenCode)
       goto deadScreen;
     else if(currentState == startScreenCode)
@@ -247,7 +247,7 @@ int main() {
 
     //MAIN GAME LOOP
 
-    handlePlayerMovment(&player, planet, delta, true);
+    handlePlayerMovment(&player, planet, actualDelta, true);
     playerApplyVelocity(&player);
     player.velocity = Vector2Scale(player.velocity, friction);
 
@@ -286,7 +286,7 @@ int main() {
 
     EndDrawing();
 
-    if(elapsedTimePowerup > 1) {
+    if(elapsedTimePowerup > powerUpTimeTimeFreeze) {
       elapsedTimePowerup = 0;
       inPowerUp = false;
     }

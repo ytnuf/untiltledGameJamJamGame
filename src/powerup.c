@@ -23,7 +23,7 @@ int shouldApplyPowerup(Camera2D camera, enemy* enArr, unsigned int enCount) {
   float closestEnemyDist = RAND_MAX; //(big number)
   for(unsigned int i = 0; i < enCount; i++) {
     float dist = Vector2DistanceSqr(enArr[i].body.position, mousePos);
-    if(dist > closestEnemyDist) //avoid nesting !1!1111 (makes it faster too!)
+    if(dist > closestEnemyDist) //avoid nesting !1!1111 (makes it faster too! (i think (not really i lied)))
       continue;
     closestEnemyDist = dist;
     closestEnemyI = i;

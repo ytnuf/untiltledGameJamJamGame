@@ -6,8 +6,9 @@
 #include "missile.h"
 #include "enemy.h"
 
-#define powerUpChance /*(0 - 1]*/ 1
+#define powerUpChance /*(0 - 1]*/ .5
 #define powerUpSelectionGive 100
+#define powerUpTimeTimeFreeze 10
 
 bool shouldDropPowerup(unsigned int enCount);
 
