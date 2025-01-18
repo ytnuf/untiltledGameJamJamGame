@@ -1,0 +1,95 @@
+{
+    "version": 8,
+    "configurePresets": [
+        {
+            "name": "linux",
+            "generator": "Unix Makefiles",
+            "binaryDir": "${sourceDir}/build/${presetName}/",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "RelWithDebInfo",
+                "CMAKE_COLOR_DIAGNOSTICS": "ON",
+                "CMAKE_C_COMPILER": "gcc"
+            }
+        },
+        {
+            "name": "web",
+            "generator": "Unix Makefiles",
+            "binaryDir": "${sourceDir}/build/${presetName}/",
+            "toolchainFile": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "MinSizeRel",
+                "CMAKE_COLOR_DIAGNOSTICS": "ON",
+                "CMAKE_PROJECT_INCLUDE": "${sourceDir}/cmake/emscripten-overwrite.cmake",
+                "VCPKG_CHAINLOAD_TOOLCHAIN_FILE": "$env{EMSDK}/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake",
+                "VCPKG_TARGET_TRIPLET": "wasm32-emscripten"
+            }
+        },
+        {
+            "name": "mingw",
+            "generator": "Unix Makefiles",
+            "binaryDir": "${sourceDir}/build/${presetName}/",
+            "toolchainFile": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "RelWithDebInfo",
+                "CMAKE_COLOR_DIAGNOSTICS": "ON",
+                "VCPKG_CHAINLOAD_TOOLCHAIN_FILE": "${sourceDir}/cmake/mingw64-toolchain.cmake",
+                "VCPKG_TARGET_TRIPLET": "x64-mingw-static"
+            }
+        }
+    ],
+    "buildPresets": [
+        {
+            "name": "linux",
+            "configurePreset": "linux"
+        },
+        {
+            "name": "web",
+            "configurePreset": "web"
+        },
+        {
+            "name": "mingw",
+            "configurePreset": "mingw"
+        }
+    ],
+    "workflowPresets": [
+        {
+            "name": "linux",
+            "steps": [
+                {
+                    "type": "configure",
+                    "name": "linux"
+                },
+                {
+                    "type": "build",
+                    "name": "linux"
+                }
+            ]
+        },
+        {
+            "name": "web",
+            "steps": [
+                {
+                    "type": "configure",
+                    "name": "web"
+                },
+                {
+                    "type": "build",
+                    "name": "web"
+                }
+            ]
+        },
+        {
+            "name": "mingw",
+            "steps": [
+                {
+                    "type": "configure",
+                    "name": "mingw"
+                },
+                {
+                    "type": "build",
+                    "name": "mingw"
+                }
+            ]
+        }
+    ]
+}
