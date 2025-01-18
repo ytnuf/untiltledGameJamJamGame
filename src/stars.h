@@ -4,7 +4,7 @@
 #include "include.h"
 #include "circle.h"
 
-#define starCount 150
+#define starCount 400
 #define starColour WHITE
 #define starRadius 1
 
