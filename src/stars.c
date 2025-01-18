@@ -45,10 +45,9 @@ void refreshStars(Vector2* starArr, Camera2D Camera, bool force) {
 }
 
 void drawStars(Vector2* starArr, Camera2D* cam) {
-  Vector2 screenDems = {GetScreenWidth(), GetScreenHeight()};
-  circle tmp = {{0}, 1, starColour};
+  float offX = roundf(cam->offset.x);
+  float offY = roundf(cam->offset.y);
   for(int i = 0; i < starCount; i++) {
-    tmp.position = starArr[i];
-    drawCircle(&tmp, screenDems);
+    DrawPixel(roundf(starArr[i].y) + offX, roundf(-starArr[i].x) + offY, starColour);
   }
 }
