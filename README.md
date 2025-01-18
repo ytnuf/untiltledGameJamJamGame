@@ -2,26 +2,34 @@
 
 this is a submission for the untitled game jam 104
 
+
 # how to play
 
 wasd to move
 
-redirect missiles at enemies to get orbs
-orbs heal and give you points you can deposit at the base
-when you deposit at the base your score increases but
-enemies also get faster and see you from much farther
+- redirect missiles at enemies to kill them
+- when enemies die they drop orbs, pick them up to heal and gain stored score
+- deposit stored score at the base, the base randomly spawns on the planet
+- sometimes when you pick up an orb you'll get a power up, use it as best you can
+- slowly enemies will spawn more and more, and shoot faster and faster, live as long as you can
+and deposit as much as you can
+
 
 # build process (with Make)
 
-have:
-gcc
-make
+you need:
+- gcc
+- make
 
-and run
+to build
 ```bash
 make
+```
+to run
+```
 ./game
 ```
+
 untitledGameJamJamGame © 2025 by maningreen is licensed under CC BY-NC-SA 4.0
 
 
