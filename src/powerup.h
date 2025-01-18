@@ -7,9 +7,9 @@
 #include "enemy.h"
 
 #define timeSlowCode 1
-#define powerUpChance /*(0 - 1]*/ 1
+#define powerUpChance /*(0 - 1]*/ .02
 #define powerUpSlowTimeValue 1.25 /*this goes into 1/n (n being the value)*/
-#define powerUpTimeTimeFreeze 2   /*if this is *too* high youll be in time slow forever*/
+#define powerUpTimeTimeFreeze 4   /*if this is *too* high youll be in time slow forever*/
 #define powerUpTimeFreezeZoom 1.02
 
 //returns which one
