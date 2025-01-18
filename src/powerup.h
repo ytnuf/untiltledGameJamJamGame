@@ -11,7 +11,7 @@
 #define powerUpSelectionGive 100
 #define powerUpTimeTimeFreeze 10
 
-#define powerUpTimeFreezeZoom .8
+#define powerUpTimeFreezeZoom 1
 
 bool shouldDropPowerup(unsigned int enCount);
 
