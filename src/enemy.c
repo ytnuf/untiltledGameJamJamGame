@@ -1,6 +1,8 @@
+#include "circle.h"
 #include "stdlib.h"
 #include <math.h>
 #include "include.h"
+#include "stdio.h"
 
 #include "enemy.h"
 #include "missile.h"
@@ -19,7 +21,8 @@ enemy initEnemy(Vector2 position, Player* player, circle avoidZone) {
   ret.avoidZone = avoidZone;//but it's so much more readable thus worth
   ret.body = enemyDefCircle;
   ret.body.position = position;
-  ret.shotSpeed = enemyDefShotSpeed;
+  ret.baseShotSpeed = enemyDefShotSpeed;
+  ret.shotSpeed = enemyDefShotSpeed + enemyDefShotSpeed * (randSingle() - .5) * 2.0f * enemyShotSpeedMaxOffsetPercentage;
   ret.speed = enemySpeed;
   ret.damage = enemydefdmng;
   ret.velocity = Vector2Zero();
@@ -100,6 +103,7 @@ void manageEnemy(enemy* en, Missile* out, float delta, bool canShoot, Sound* mis
     *out = fireMissile(en);
     out->valid = true;
     PlaySound(*missileFiredSound);
+    en->shotSpeed = en->baseShotSpeed + en->baseShotSpeed * (randSingle() - .5) * 2.0f * enemyShotSpeedMaxOffsetPercentage;
   } else
     out->valid = false;
   enemyNavigate(en, delta);

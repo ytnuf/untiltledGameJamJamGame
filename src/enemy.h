@@ -23,7 +23,7 @@
 #define enemyHitboxRadius 70
 #define enemyMissileDetectionMinimumLifetime .1 //this is a long name basically it just is the minimum time a missile has to exist for it to hit an enemy
 #define enemyOrbSpawnCount 3
-#define maxPercentageOffset .1
+#define enemyShotSpeedMaxOffsetPercentage .17
 
 #define enemyFric .8
 
@@ -36,6 +36,7 @@ struct enemy {
   Player* player;
   float prefDistMaxOffset;
   float elapsedShotTime;
+  float baseShotSpeed;
   float shotSpeed;
   float viewDistance;
   float targetDistance;
