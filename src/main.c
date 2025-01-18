@@ -172,8 +172,9 @@ void manageMissiles(Missile** missileArr, enemy* enemyArr, int* missileCount, in
     }
     for(int b = 0; b < *enemyCount; b++) {
       if(enemyShouldDieToMissile(&enemyArr[b], &(*missileArr)[i])) {
+        if(enemyArr[b].valid)
+          (*missileArr)[i].valid = false;
         enemyArr[b].valid = false;
-        (*missileArr)[i].valid = false;
         enemyArr[b].viewDistance = atan2f(vecTo.x, vecTo.y);
         applyCameraShake(cam, enemyDieMagnitude, enemyDieJitterness, atan2f(vecTo.x, vecTo.y));
         continue;

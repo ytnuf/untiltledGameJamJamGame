@@ -6,8 +6,8 @@
 #include "missile.h"
 #include "enemy.h"
 
-#define powerUpChance /*(0 - 1]*/ .5
-#define powerSlowValue 3
+#define powerUpChance /*(0 - 1]*/ .01
+#define powerSlowValue 2.25
 #define powerUpSelectionGive 100
 #define powerUpTimeTimeFreeze 10
 
