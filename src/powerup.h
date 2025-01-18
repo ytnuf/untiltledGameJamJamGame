@@ -6,14 +6,21 @@
 #include "missile.h"
 #include "enemy.h"
 
+#define timeSlowCode 1
+#define deadeyeCode 2
+
 #define powerUpChance /*(0 - 1]*/ .05
-#define powerSlowValue 2.25
-#define powerUpSelectionGive 100
+#define powerUpSlowTimeValue 2.25 /*this goes into 1/n (n being the value)*/
 #define powerUpTimeTimeFreeze 10
 
 #define powerUpTimeFreezeZoom 1
+#define powerUpDeadeyeZoom .8
 
-bool shouldDropPowerup();
+#define powerUpDeadeyeGive 100
+#define powerUpDeadeyeTime 5
+
+//returns which one
+short shouldDropPowerup();
 
 void applyPowerup(Missile* misArr, unsigned int misCount, circle* target);
 
