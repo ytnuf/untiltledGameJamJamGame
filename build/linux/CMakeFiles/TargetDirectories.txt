@@ -1,5 +1,0 @@
-/home/flibbers/documents/program/c/projects/raylib/untitledGameJam104/code/build/linux/CMakeFiles/untitled_game_jam_jam_game.dir
-/home/flibbers/documents/program/c/projects/raylib/untitledGameJam104/code/build/linux/CMakeFiles/edit_cache.dir
-/home/flibbers/documents/program/c/projects/raylib/untitledGameJam104/code/build/linux/CMakeFiles/rebuild_cache.dir
-/home/flibbers/documents/program/c/projects/raylib/untitledGameJam104/code/build/linux/libraries/CMakeFiles/edit_cache.dir
-/home/flibbers/documents/program/c/projects/raylib/untitledGameJam104/code/build/linux/libraries/CMakeFiles/rebuild_cache.dir
