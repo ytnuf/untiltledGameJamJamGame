@@ -1,5 +1,7 @@
 # ignore the game exe
 game
+game.exe
+# latter is for windows builds
 # CMake outputs
 build/
 compile_commands.json
