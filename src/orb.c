@@ -19,7 +19,7 @@ Vector2 getOrbTargetPosition(Orb* ob) {
   return Vector2Add(getPositionFromAngle(angle, ob->distance), ob->target->position);
 }
 
-Vector2 getOrbAvoidForce(Orb* ob, float delta) {
+static  Vector2 getOrbAvoidForce(Orb* ob, float delta) {
   Vector2 dif = getVectorTo(ob->avoidArea->position, ob->body.position);
   float distanceFromEdge = ob->avoidArea->radius - Vector2Distance(ob->avoidArea->position, ob->body.position);
   if(distanceFromEdge + orbAvoidRadius < 0)

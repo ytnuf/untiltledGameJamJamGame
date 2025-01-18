@@ -2,11 +2,11 @@
 #include "circle.h"
 #include "include.h"
 
-float randSingleFull() {
+static float randSingleFull(void) {
   return (randSingle() - .5f) * 2.0f;
 }
 
-Vector2 randVec() {
+static Vector2 randVec(void) {
   return (Vector2){randSingleFull(), randSingleFull()};
 }
 

@@ -78,7 +78,7 @@
 
 #define baseCameraZoom .9
 
-void manageEnemies(enemy** enemyArr, Missile** missileArr, Orb** orbArr, int* enemyCount, int* missileCount, int* orbCount, Player* player, circle* planet, Sound* missileFiredSound, Sound* enemyHitSound, bool depositing, float delta) {
+static void manageEnemies(enemy** enemyArr, Missile** missileArr, Orb** orbArr, int* enemyCount, int* missileCount, int* orbCount, Player* player, circle* planet, Sound* missileFiredSound, Sound* enemyHitSound, bool depositing, float delta) {
   Vector2 globalScreenDimensions = (Vector2){GetScreenWidth(), GetScreenHeight()};
   int i = 0;
   while(*enemyCount != 0 && i < *enemyCount) {
@@ -114,7 +114,7 @@ void manageEnemies(enemy** enemyArr, Missile** missileArr, Orb** orbArr, int* en
 }
 
 //returns if we're in a power up state and which one
-short manageOrbs(Orb** orbArr, int* orbCount, Player* player, Base* base, shakeCamera* cam, Sound* collectionSound, float delta) {
+static short manageOrbs(Orb** orbArr, int* orbCount, Player* player, Base* base, shakeCamera* cam, Sound* collectionSound, float delta) {
   Vector2 globalScreenDimensions = (Vector2){GetScreenWidth(), GetScreenHeight()};
   short power = false;
   int i = 0;
@@ -149,7 +149,7 @@ short manageOrbs(Orb** orbArr, int* orbCount, Player* player, Base* base, shakeC
   return power;
 }
 
-void manageMissiles(Missile** missileArr, enemy* enemyArr, int* missileCount, int* enemyCount, Player* player, circle* planet, shakeCamera* cam, Sound* missileBrokeSound, Sound* playerHitSound, float delta) {
+static void manageMissiles(Missile** missileArr, enemy* enemyArr, int* missileCount, int* enemyCount, Player* player, circle* planet, shakeCamera* cam, Sound* missileBrokeSound, Sound* playerHitSound, float delta) {
   Vector2 globalScreenDimensions = (Vector2){GetScreenWidth(), GetScreenHeight()};
   int i = 0;
   while(*missileCount != 0 && i < *missileCount) {
@@ -186,7 +186,7 @@ void manageMissiles(Missile** missileArr, enemy* enemyArr, int* missileCount, in
   }
 }
 
-int main() {
+int main(void) {
   srand(time(NULL));
   InitWindow(screenDimensions.x, screenDimensions.y, "cool game :)");
   InitAudioDevice();
@@ -202,7 +202,7 @@ int main() {
   SetTargetFPS(60);
   shakeCamera camera = {(Camera2D){Vector2Scale(screenDimensions, .5), Vector2Scale(screenDimensions, .5),0, baseCameraZoom}, 0, Vector2Zero(), Vector2Zero()};
 
-  Player player = {(circle){playerStartingPosition, playerR, playerColour}, Vector2Zero(), playerMaxHealth, playerMaxHealth};
+  Player player = {(circle){playerStartingPosition, playerR, playerColour}, Vector2Zero(), playerMaxHealth, playerMaxHealth, 0.f};
 
   circle planet = {{4150, 4150}, 5000, planetColour};
 
@@ -369,7 +369,7 @@ deadScreen:
       orbCount = 0;
       enemyCount = 0;
       base.score = 0;
-      player = (Player){(circle){playerStartingPosition, playerR, playerColour}, Vector2Zero(), playerMaxHealth, playerMaxHealth};
+      player = (Player){(circle){playerStartingPosition, playerR, playerColour}, Vector2Zero(), playerMaxHealth, playerMaxHealth, 0.f};
       enemyArr = realloc(enemyArr, enSize * enemyCount);
       orbArr = realloc(orbArr, orbSize * orbCount);
       missileArr = realloc(missileArr, misSize * missileCount);
@@ -397,7 +397,7 @@ deadScreen:
     drawCircle(&player.body, globalScreenDimensions);
     DrawText(mainMenuTextFormat, (GetScreenWidth() - MeasureTextEx(GetFontDefault(), mainMenuTextFormat, 100, GetFontDefault().baseSize).x) / 2.0f, 0, 100, WHITE);
     drawButton(&start);
-    if(buttonIsPressed(start, (Camera2D){0, 0, 0, 0, 0, 1})) {
+    if(buttonIsPressed(start, (Camera2D){ {0.f, 0.f}, {0.f, 0.f}, 0.f, 1.f})) {
       player.velocity = (Vector2){GetScreenHeight() / 10.0f, 0};
       player.body.position = camera.base.target;
       player.body.position.x = camera.base.target.x - GetScreenHeight();
@@ -408,9 +408,6 @@ deadScreen:
       camera.target = Vector2Add((Vector2){player.body.position.y, player.body.position.x}, camera.base.offset);
     }
     EndDrawing();
-    continue;
-
-  restart:
     continue;
   }
   CloseAudioDevice();

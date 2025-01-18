@@ -39,7 +39,7 @@ Vector2 playerGetAvoidanceForce(Player* plr, circle planet, float delta) {
   return Vector2Scale(difNormalized, distanceFromEdge * delta * avoidanceScalar);
 }
 
-void playerApplyAvoidanceForce(Player* plr, circle planet, float delta) {
+static void playerApplyAvoidanceForce(Player* plr, circle planet, float delta) {
   plr->velocity = Vector2Add(playerGetAvoidanceForce(plr, planet, delta), plr->velocity);
 }
 

@@ -4,16 +4,12 @@
 
 #define scalar (Vector2){1, -1}
 
-Vector2 toCartesian(Vector2 v) {
-  return (Vector2){-v.y, v.x};
-}
-
-void drawCircle(circle* circle, Vector2 screenDimensions) {
-  DrawCircle(circle->position.y + (screenDimensions.x / 2.0f), -circle->position.x + (screenDimensions.y / 2.0f), circle->radius, circle->colour);
+void drawCircle(circle* cir, Vector2 screenDimensions) {
+  DrawCircle(cir->position.y + (screenDimensions.x / 2.0f), -cir->position.x + (screenDimensions.y / 2.0f), cir->radius, cir->colour);
 }
 
 //seed before.
-float randSingle() {
+float randSingle(void) {
   return (float)rand() / (float)RAND_MAX;
 }
 

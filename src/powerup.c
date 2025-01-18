@@ -1,6 +1,6 @@
 #include "powerup.h"
 #include "circle.h"
 
-bool shouldDropPowerup() {
+bool shouldDropPowerup(void) {
   return randSingle() <= powerUpChance;
 }

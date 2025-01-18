@@ -7,12 +7,8 @@
 #include "enemy.h"
 #include "missile.h"
 
-float min(float a, float b) {
+static float min(float a, float b) {
   return a < b ? a : b;
-}
-
-float max(float a, float b) {
-  return a < b ? b : a;
 }
 
 enemy initEnemy(Vector2 position, Player* player, circle avoidZone) {
@@ -35,32 +31,24 @@ enemy initEnemy(Vector2 position, Player* player, circle avoidZone) {
   return ret;
 }
 
-bool enemyTooCloseToPlayer(enemy en) {
-  return enemyMinimumDistance > Vector2Distance(en.body.position, en.player->body.position);
-}
-
 bool enemyCanSeePlayer(enemy en) {
   return en.viewDistance > Vector2Distance(en.body.position, en.player->body.position);
 }
 
-void enemyApplyVelocity(enemy* en) {
+static void enemyApplyVelocity(enemy* en) {
   en->body.position = Vector2Add(en->body.position, en->velocity);
 }
 
 //this must be called multiple times
-void navigateToPoint(enemy* en, Vector2 position, float delta) {
+static void navigateToPoint(enemy* en, Vector2 position, float delta) {
   Vector2 vectorToPoint = Vector2Subtract(position, en->body.position);
   float speed = min(Vector2Length(vectorToPoint), en->speed);
   en->velocity = Vector2Add(Vector2Scale(Vector2Normalize(Vector2Subtract(vectorToPoint, en->velocity)), speed * delta), en->velocity);
 }
 
-Vector2 enemyGetTargetPosition(enemy* en) {
+static Vector2 enemyGetTargetPosition(enemy* en) {
   Vector2 difNormal = Vector2Normalize(Vector2Subtract(en->body.position, en->player->body.position));
   return Vector2Add(Vector2Scale(difNormal, en->targetDistance), en->player->body.position);
-}
-
-bool enemyTargetInPlanet(enemy* en) {
-  return Vector2DistanceSqr(en->avoidZone.position, enemyGetTargetPosition(en)) < en->avoidZone.radius * en->avoidZone.radius;
 }
 
 void enemyNavigate(enemy* en, float delta) {
@@ -89,7 +77,7 @@ bool enemyShouldSpawnMissile(enemy* en) {
   return en->elapsedShotTime >= en->shotSpeed && Vector2Distance(en->body.position, en->player->body.position) < enemyFiringRange;
 }
 
-Missile fireMissile(enemy* en) {
+static Missile fireMissile(enemy* en) {
   Vector2 toTar = Vector2Normalize(Vector2Subtract( en->body.position, en->player->body.position));
   Vector2 force = Vector2Scale(toTar, enemyKnockBack);
   en->velocity = Vector2Add(en->velocity, force);

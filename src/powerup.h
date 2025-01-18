@@ -13,6 +13,6 @@
 #define powerUpTimeFreezeZoom 1.02
 
 //returns which one
-bool shouldDropPowerup();
+bool shouldDropPowerup(void);
 
 #endif

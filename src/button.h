@@ -5,7 +5,7 @@
 
 struct button {
   Rectangle rect;
-  char* text;
+  const char* text;
   int textSize;
   Color rectCol;
   Color textCol;

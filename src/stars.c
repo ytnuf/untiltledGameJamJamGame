@@ -11,7 +11,7 @@
 Vector2* initStars(int star) {
   Vector2* out = (Vector2*)malloc(sizeof(Vector2) * star);
   while(star-- > 0) {
-    out[star] = (Vector2){10000};
+    out[star] = (Vector2){10000.f, 0.f};
   }
   return out;
 }
@@ -20,21 +20,21 @@ void destructStars(Vector2* starArr) {
   free(starArr);
 }
 
-bool getPointIsOnScreenScaled(Vector2 point, Vector2 screenDems, Camera2D cam, float scale) {
+static bool getPointIsOnScreenScaled(Vector2 point, Vector2 screenDems, Camera2D cam, float scale) {
   Vector2 remFromCam = removeCam(point, cam);
   bool inX = (remFromCam.y < 0 ? -remFromCam.y : remFromCam.y) <= screenDems.x * scale / (2.0f * cam.zoom);
   bool inY = (remFromCam.x < 0 ? -remFromCam.x : remFromCam.x) <= screenDems.y * scale / (2.0f * cam.zoom);
   return inX && inY;
 }
 
-void refreshStars(Vector2* starArr, Camera2D Camera, bool force) {
+void refreshStars(Vector2* starArr, Camera2D camera, bool force) {
   int i = 0;
   bool nforce = !force;
   Vector2 screenDems = {GetScreenWidth(), GetScreenHeight()};
   while(i < starCount) {
-    if(!getPointIsOnScreenScaled(starArr[i], screenDems, Camera, starReloadDist) || force) {
-      Vector2 rand = applyCam(Vector2Scale(getRandomVector2OnScreen(Camera), starSpawnDist), Camera);
-      if(getPointIsOnScreenScaled(rand, screenDems, Camera, 1) && nforce) {
+    if(!getPointIsOnScreenScaled(starArr[i], screenDems, camera, starReloadDist) || force) {
+      Vector2 rand = applyCam(Vector2Scale(getRandomVector2OnScreen(camera), starSpawnDist), camera);
+      if(getPointIsOnScreenScaled(rand, screenDems, camera, 1) && nforce) {
         i++;
         continue;
       }
