@@ -113,10 +113,10 @@ void manageEnemies(enemy** enemyArr, Missile** missileArr, Orb** orbArr, int* en
   }
 }
 
-//returns if we're in a power up state
-bool manageOrbs(Orb** orbArr, int* orbCount, Player* player, Base* base, shakeCamera* cam, Sound* collectionSound, float delta) {
+//returns if we're in a power up state and which one
+short manageOrbs(Orb** orbArr, int* orbCount, Player* player, Base* base, shakeCamera* cam, Sound* collectionSound, float delta) {
   Vector2 globalScreenDimensions = (Vector2){GetScreenWidth(), GetScreenHeight()};
-  bool power = false;
+  short power = false;
   int i = 0;
   while(*orbCount != 0 && i < *orbCount) {
     if(!(*orbArr)[i].valid) {
@@ -131,7 +131,7 @@ bool manageOrbs(Orb** orbArr, int* orbCount, Player* player, Base* base, shakeCa
       (*orbArr)[i] = (*orbArr)[*orbCount - 1];
       (*orbArr) = (Orb*)realloc((*orbArr), orbSize * (*orbCount)--);
       applyCameraShake(cam, orbCollectMagnitude, orbCollectJitterness, (*orbArr)[i].angle);
-      power = shouldDropPowerup(1);
+      power = 1;
       continue;
     }
     if(positionInRangeOfBase(base, (*orbArr)[i].body.position) && !(*orbArr)[i].approaching) {
@@ -234,8 +234,10 @@ int main() {
 
   float elapsedTimePowerup = 0;
 
+  unsigned short slowTimeCount = 0;
+  bool inDeadeye = false;
+
   double prevTime = GetTime();
-  bool inPowerUp = false;
   while(!WindowShouldClose()) {
     frameCount++;
     globalScreenDimensions = (Vector2){GetScreenWidth(), GetScreenHeight()};
@@ -244,8 +246,8 @@ int main() {
     //this is just for health stuff
     player.body.colour = ColorLerp(playerColour, playerDeadColour, 1 - player.health/player.maxHealth);
     double curTime = GetTime();
-    float actualDelta = curTime - prevTime;
-    float delta = !inPowerUp ? actualDelta : actualDelta / powerSlowValue;
+    float actualDelta = !inDeadeye ? curTime - prevTime : 0;
+    float delta = slowTimeCount == 0 ? actualDelta : actualDelta / (powerUpSlowTimeValue * slowTimeCount);
     prevTime = curTime;
     if(currentState == deadScreenCode)
       goto deadScreen;
@@ -279,10 +281,11 @@ int main() {
     drawStars(starArr, &camera.base);
     manageMissiles(&missileArr, enemyArr, &missileCount, &enemyCount, &player, &planet, &camera, &missileBrokeSound, &playerHitSound, delta);
     manageEnemies(&enemyArr, &missileArr, &orbArr, &enemyCount, &missileCount, &orbCount, &player, &planet, &missileFiredSound, &enemyHitSound, positionInRangeOfBase(&base, player.body.position), delta);
-    bool applyPower = manageOrbs(&orbArr, &orbCount, &player, &base, &camera, &collectionSound, delta);
-    inPowerUp = applyPower || inPowerUp;
-    if(applyPower)
+    short applyPower = manageOrbs(&orbArr, &orbCount, &player, &base, &camera, &collectionSound, delta);
+    if(applyPower == timeSlowCode) {
       elapsedTimePowerup = 0;
+      slowTimeCount++;
+    }
     manageBase(&base, &player, &gainScoreSound, delta);
 
     drawCircle(&player.body, globalScreenDimensions);
@@ -297,12 +300,12 @@ int main() {
 
     if(elapsedTimePowerup > powerUpTimeTimeFreeze) {
       elapsedTimePowerup = 0;
-      inPowerUp = false;
+      slowTimeCount--;
     }
-    if(inPowerUp) {
+    if(slowTimeCount != 0) {
       elapsedTimePowerup += actualDelta;
-      camera.base.zoom += (powerUpTimeFreezeZoom - camera.base.zoom) * cameraLatency;
-    } else 
+      camera.base.zoom += (powf(powerUpTimeFreezeZoom, slowTimeCount) - camera.base.zoom) * cameraLatency;
+    } else
       camera.base.zoom += (baseCameraZoom - camera.base.zoom) * cameraLatency;
 
     if(elapsedTimeEn < enemySpawnTime)
