@@ -48,6 +48,6 @@ void drawStars(Vector2* starArr, Camera2D* cam) {
   float offX = roundf(cam->offset.x);
   float offY = roundf(cam->offset.y);
   for(int i = 0; i < starCount; i++) {
-    DrawPixel(roundf(starArr[i].y) + offX, roundf(-starArr[i].x) + offY, starColour);
+    DrawPixel(starArr[i].y + offX, -starArr[i].x + offY, starColour);
   }
 }
