@@ -14,6 +14,7 @@
 #include "orb.h"
 #include "depositing.h"
 #include "button.h"
+#include "powerup.h"
 
 #define screenDimensions (Vector2){1000 * 16/9, 1000 / (16 / 9)}
 
@@ -75,6 +76,8 @@
 #define restartButtonTextFormat "Play again."
 #define restartButtonTextSize 50
 
+#define baseCameraZoom .9
+
 void manageEnemies(enemy** enemyArr, Missile** missileArr, Orb** orbArr, int* enemyCount, int* missileCount, int* orbCount, Player* player, circle* planet, Sound* missileFiredSound, Sound* enemyHitSound, bool depositing, float delta) {
   Vector2 globalScreenDimensions = (Vector2){GetScreenWidth(), GetScreenHeight()};
   int i = 0;
@@ -110,8 +113,10 @@ void manageEnemies(enemy** enemyArr, Missile** missileArr, Orb** orbArr, int* en
   }
 }
 
-void manageOrbs(Orb** orbArr, int* orbCount, Player* player, Base* base, shakeCamera* cam, Sound* collectionSound, float delta) {
+//returns if we're in a power up state
+bool manageOrbs(Orb** orbArr, int* orbCount, Player* player, Base* base, shakeCamera* cam, Sound* collectionSound, float delta) {
   Vector2 globalScreenDimensions = (Vector2){GetScreenWidth(), GetScreenHeight()};
+  bool power = false;
   int i = 0;
   while(*orbCount != 0 && i < *orbCount) {
     if(!(*orbArr)[i].valid) {
@@ -126,6 +131,7 @@ void manageOrbs(Orb** orbArr, int* orbCount, Player* player, Base* base, shakeCa
       (*orbArr)[i] = (*orbArr)[*orbCount - 1];
       (*orbArr) = (Orb*)realloc((*orbArr), orbSize * (*orbCount)--);
       applyCameraShake(cam, orbCollectMagnitude, orbCollectJitterness, (*orbArr)[i].angle);
+      power = shouldDropPowerup(1);
       continue;
     }
     if(positionInRangeOfBase(base, (*orbArr)[i].body.position) && !(*orbArr)[i].approaching) {
@@ -140,6 +146,7 @@ void manageOrbs(Orb** orbArr, int* orbCount, Player* player, Base* base, shakeCa
     drawCircle(&(*orbArr)[i].body, globalScreenDimensions);
     i++;
   }
+  return power;
 }
 
 void manageMissiles(Missile** missileArr, enemy* enemyArr, int* missileCount, int* enemyCount, Player* player, circle* planet, shakeCamera* cam, Sound* missileBrokeSound, Sound* playerHitSound, float delta) {
@@ -167,8 +174,9 @@ void manageMissiles(Missile** missileArr, enemy* enemyArr, int* missileCount, in
     }
     for(int b = 0; b < *enemyCount; b++) {
       if(enemyShouldDieToMissile(&enemyArr[b], &(*missileArr)[i])) {
+        if(enemyArr[b].valid)
+          (*missileArr)[i].valid = false;
         enemyArr[b].valid = false;
-        (*missileArr)[i].valid = false;
         enemyArr[b].viewDistance = atan2f(vecTo.x, vecTo.y);
         applyCameraShake(cam, enemyDieMagnitude, enemyDieJitterness, atan2f(vecTo.x, vecTo.y));
         continue;
@@ -192,7 +200,7 @@ int main() {
   Sound gainScoreSound = LoadSound(collectionGrowPath);
 
   SetTargetFPS(60);
-  shakeCamera camera = {(Camera2D){Vector2Scale(screenDimensions, .5), Vector2Scale(screenDimensions, .5),0, .9}, 0, Vector2Zero(), Vector2Zero()};
+  shakeCamera camera = {(Camera2D){Vector2Scale(screenDimensions, .5), Vector2Scale(screenDimensions, .5),0, baseCameraZoom}, 0, Vector2Zero(), Vector2Zero()};
 
   Player player = {(circle){playerStartingPosition, playerR, playerColour}, Vector2Zero(), playerMaxHealth, playerMaxHealth};
 
@@ -209,7 +217,7 @@ int main() {
 
   short currentState = startScreenCode;
 
-  float elapsedTime = 0;
+  float elapsedTimeEn = 0;
   float enemySpawnTime = enemySpawnTimeStart;
   float enemyShotSpeed = enemyShotSpeedStart;
 
@@ -224,6 +232,8 @@ int main() {
 
   camera.base.offset = (Vector2){GetScreenWidth() * .5, GetScreenHeight() * .5};
 
+  float elapsedTimePowerup = 0;
+  bool inPowerUp = false;
   while(!WindowShouldClose()) {
     frameCount++;
     globalScreenDimensions = (Vector2){GetScreenWidth(), GetScreenHeight()};
@@ -231,13 +241,16 @@ int main() {
     refreshCamera(&camera);
     //this is just for health stuff
     player.body.colour = ColorLerp(playerColour, playerDeadColour, 1 - player.health/player.maxHealth);
-    float delta = GetFrameTime();
+    float actualDelta = GetFrameTime();
+    float delta = !inPowerUp ? actualDelta : actualDelta / powerSlowValue;
     if(currentState == deadScreenCode)
       goto deadScreen;
     else if(currentState == startScreenCode)
       goto mainMenu;
 
-    handlePlayerMovment(&player, planet, delta, true);
+    //MAIN GAME LOOP
+
+    handlePlayerMovment(&player, planet, actualDelta, true);
     playerApplyVelocity(&player);
     player.velocity = Vector2Scale(player.velocity, friction);
 
@@ -262,7 +275,10 @@ int main() {
     drawStars(starArr, &camera.base);
     manageMissiles(&missileArr, enemyArr, &missileCount, &enemyCount, &player, &planet, &camera, &missileBrokeSound, &playerHitSound, delta);
     manageEnemies(&enemyArr, &missileArr, &orbArr, &enemyCount, &missileCount, &orbCount, &player, &planet, &missileFiredSound, &enemyHitSound, positionInRangeOfBase(&base, player.body.position), delta);
-    manageOrbs(&orbArr, &orbCount, &player, &base, &camera, &collectionSound, delta);
+    bool applyPower = manageOrbs(&orbArr, &orbCount, &player, &base, &camera, &collectionSound, delta);
+    inPowerUp = applyPower || inPowerUp;
+    if(applyPower)
+      elapsedTimePowerup = 0;
     manageBase(&base, &player, &gainScoreSound, delta);
 
     drawCircle(&player.body, globalScreenDimensions);
@@ -275,10 +291,20 @@ int main() {
 
     EndDrawing();
 
-    if(elapsedTime < enemySpawnTime)
-      elapsedTime += delta;
+    if(elapsedTimePowerup > powerUpTimeTimeFreeze) {
+      elapsedTimePowerup = 0;
+      inPowerUp = false;
+    }
+    if(inPowerUp) {
+      elapsedTimePowerup += actualDelta;
+      camera.base.zoom += (powerUpTimeFreezeZoom - camera.base.zoom) * cameraLatency;
+    } else 
+      camera.base.zoom += (baseCameraZoom - camera.base.zoom) * cameraLatency;
+
+    if(elapsedTimeEn < enemySpawnTime)
+      elapsedTimeEn += actualDelta; //ensure that the time isn't slowed down
     else {
-      elapsedTime = 0;
+      elapsedTimeEn = 0;
       enemySpawnTime += -enemySpawnTime * enemySpawnTimeDecay;
       enemyShotSpeed += -enemyShotSpeed * enemyShotSpeedDecay;
       //spawn enemy
@@ -291,7 +317,7 @@ int main() {
     if(IsKeyDown(closeKey))
       break;
 
-  continue;
+    continue;
 
 deadScreen:
     //most of this is here so it feels like the world keeps going
@@ -311,7 +337,7 @@ deadScreen:
     drawBorder(&base, globalScreenDimensions);
 
     manageMissiles(&missileArr, enemyArr, &missileCount, &enemyCount, &player, &planet, &camera, &missileBrokeSound, &playerHitSound, delta);
-    manageEnemies(&enemyArr, &missileArr, &orbArr, &enemyCount, &missileCount, &orbCount, &player, &planet, &missileFiredSound, &enemyHitSound, positionInRangeOfBase(&base, player.body.position), delta);
+    manageEnemies(&enemyArr, &missileArr, &orbArr, &enemyCount, &missileCount, &orbCount, &player, &planet, &missileFiredSound, &enemyHitSound, positionInRangeOfBase(&base, player.body.position), actualDelta);
     manageOrbs(&orbArr, &orbCount, &player, &base, &camera, &collectionSound, delta);
 
     if(player.health > 0)

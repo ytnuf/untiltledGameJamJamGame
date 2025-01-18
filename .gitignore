@@ -1,7 +1,5 @@
 # ignore the game exe
 game
-gmon.out
-
 # CMake outputs
 build/
 compile_commands.json
