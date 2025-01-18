@@ -233,6 +233,8 @@ int main() {
   camera.base.offset = (Vector2){GetScreenWidth() * .5, GetScreenHeight() * .5};
 
   float elapsedTimePowerup = 0;
+
+  double prevTime = GetTime();
   bool inPowerUp = false;
   while(!WindowShouldClose()) {
     frameCount++;
@@ -241,8 +243,10 @@ int main() {
     refreshCamera(&camera);
     //this is just for health stuff
     player.body.colour = ColorLerp(playerColour, playerDeadColour, 1 - player.health/player.maxHealth);
-    float actualDelta = GetFrameTime();
+    double curTime = GetTime();
+    float actualDelta = curTime - prevTime;
     float delta = !inPowerUp ? actualDelta : actualDelta / powerSlowValue;
+    prevTime = curTime;
     if(currentState == deadScreenCode)
       goto deadScreen;
     else if(currentState == startScreenCode)
