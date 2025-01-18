@@ -76,6 +76,8 @@
 #define restartButtonTextFormat "Play again."
 #define restartButtonTextSize 50
 
+#define baseCameraZoom .9
+
 void manageEnemies(enemy** enemyArr, Missile** missileArr, Orb** orbArr, int* enemyCount, int* missileCount, int* orbCount, Player* player, circle* planet, Sound* missileFiredSound, Sound* enemyHitSound, bool depositing, float delta) {
   Vector2 globalScreenDimensions = (Vector2){GetScreenWidth(), GetScreenHeight()};
   int i = 0;
@@ -198,7 +200,7 @@ int main() {
   Sound gainScoreSound = LoadSound(collectionGrowPath);
 
   SetTargetFPS(60);
-  shakeCamera camera = {(Camera2D){Vector2Scale(screenDimensions, .5), Vector2Scale(screenDimensions, .5),0, .9}, 0, Vector2Zero(), Vector2Zero()};
+  shakeCamera camera = {(Camera2D){Vector2Scale(screenDimensions, .5), Vector2Scale(screenDimensions, .5),0, baseCameraZoom}, 0, Vector2Zero(), Vector2Zero()};
 
   Player player = {(circle){playerStartingPosition, playerR, playerColour}, Vector2Zero(), playerMaxHealth, playerMaxHealth};
 
@@ -293,8 +295,11 @@ int main() {
       elapsedTimePowerup = 0;
       inPowerUp = false;
     }
-    if(inPowerUp)
+    if(inPowerUp) {
       elapsedTimePowerup += actualDelta;
+      camera.base.zoom += (powerUpTimeFreezeZoom - camera.base.zoom) * cameraLatency;
+    } else 
+      camera.base.zoom += (baseCameraZoom - camera.base.zoom) * cameraLatency;
 
     if(elapsedTimeEn < enemySpawnTime)
       elapsedTimeEn += actualDelta; //ensure that the time isn't slowed down
