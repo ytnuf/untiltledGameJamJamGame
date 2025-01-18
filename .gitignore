@@ -6,3 +6,6 @@ compile_commands.json
 
 # Clangd
 .cache/
+
+# profiling when it happens
+gmon.out
